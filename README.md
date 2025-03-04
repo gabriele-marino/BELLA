@@ -13,6 +13,8 @@ NNvsGLM/
 │   ├── README.md
 │   ├── ...
 │
+├── data/      # Data
+│
 ├── README.md
 ├── .gitignore
 ```
