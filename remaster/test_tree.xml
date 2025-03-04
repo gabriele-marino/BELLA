@@ -8,7 +8,7 @@
 
                 <reaction spec="Reaction" rate="72"> X -> 2X </reaction>
                 <reaction spec="Reaction" rate="32"> X -> 0 </reaction>
-                <reaction spec="Reaction" rate="4 6 8" changeTimes="0.03 0.05"> X -> sample </reaction>
+                <reaction spec="Reaction" rate="1 2 3" changeTimes="0.1 0.15"> X -> sample </reaction>
             </trajectory>
         </simulate>
 
