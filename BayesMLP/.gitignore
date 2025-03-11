@@ -18,17 +18,11 @@
 /dist
 
 # Temporary tests and BEAST log files
-/src/tempTests/
-/examples/tempExamples/
-/Results/
-/*.state
-/*.trees
-/*.log
-/*.newick
-/*.nexus
-/src/beast/math/*Temp.java
-/src/treeSimulator/
-/debugging
+*.state
+*.trees
+*.log
+*.newick
+*.nexus
 
 # MacOS cruft
-.DS_Store
+*.DS_Store
