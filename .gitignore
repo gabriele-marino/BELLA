@@ -1,2 +1,5 @@
+*.DS_Store
+*.idea
+*.iml
 *.log
 *.state
