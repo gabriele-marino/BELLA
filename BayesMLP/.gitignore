@@ -1,0 +1,34 @@
+# IntelliJ cruft
+/out/
+/.idea
+/*.iml
+/lib/
+
+# Eclipse
+.classpath
+.project
+
+# Misc cruft
+/META-INF
+/bin
+
+# Ant build script
+/build
+/build-lib
+/dist
+
+# Temporary tests and BEAST log files
+/src/tempTests/
+/examples/tempExamples/
+/Results/
+/*.state
+/*.trees
+/*.log
+/*.newick
+/*.nexus
+/src/beast/math/*Temp.java
+/src/treeSimulator/
+/debugging
+
+# MacOS cruft
+.DS_Store
