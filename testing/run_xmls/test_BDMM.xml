@@ -33,7 +33,7 @@
 
     <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="$(chainLength=100000)">
         <state id="state">
-            <parameter id="origin" lower="0.0" name="stateNode">0.17819</parameter>
+            <parameter id="origin" lower="0.0" name="stateNode">0.19624</parameter>
             <parameter spec="RealParameter" name="stateNode" id="samplingRate" value="0.1 0.1 0.1"/>
             <stateNode idref="tree"/>
         </state>
@@ -56,7 +56,7 @@
                             <skylineValues idref="samplingRate" />
                         </samplingRate>
                         <removalProb spec="SkylineVectorParameter">
-                            <skylineValues spec="RealParameter" value="0.0"/>
+                            <skylineValues spec="RealParameter" value="1.0"/>
                         </removalProb>
                     </parameterization>
                 </distribution>

@@ -15,29 +15,31 @@ wd <- "~/Documents/Source/beast2.7/NNvsGLM/testing"
 log_dir <- "out_logs"
 out_dir <-"out_figs"
 
+#True sampling rate values
+true_values <- c(0.5, 1.5, 2)
+
 setwd(wd)
 
 # Read BEAST2 log files
 read_beast_log <- function(file_path) {
   data <- read.table(file_path, header = TRUE, comment.char = "#", sep = "\t", fill = TRUE)
-  data <- data %>% select(matches("samplingRateSVi[0-9]"))  # Select only relevant columns
-  data$Source <- sub("^[^_]+_(.*)_[^_]+$", "\\1", basename(file_path))  # Extract text between first and last "_"
+  data <- data %>% select(matches("^samplingRateSVi[0-9]$"))  # Select only relevant parameters, excluding changeTime
+  data$Source <- sub("^[^_]+_(.*?)_\\d+\\.log$", "\\1", basename(file_path))  # Extract method name, ignoring random seed
   return(data)
 }
 
 
 setwd(paste0(wd,"/",log_dir))
-# File paths
-log_files <- list(
-  "test_GLM_1741698720624.log",
-  # "test_NN_2_1741698474078.log",
-  "test_NN_1_1741698060502.log",
-  "test_BDMM_1741700849698.log",
-  "test_NN_0_1741692505242.log"
-)
+
+# Define file pattern to match all relevant log files
+file_patterns <- c("test_GLM_*.log", "test_NN_*.log", "test_BDMM_*.log")  # Adjust patterns as needed
+
+# Get list of files dynamically
+log_files <- unlist(lapply(file_patterns, Sys.glob))
 
 # Read log files
 log_data_list <- lapply(log_files, read_beast_log)
+
 
 # Standardize column names (some logs may have missing columns)
 common_cols <- Reduce(intersect, lapply(log_data_list, colnames))
@@ -69,9 +71,9 @@ save_plot <- function(plot, filename) {
 }
 
 # Print plots
-plot_svi0 <- plot_posterior(sampling_data, "samplingRateSVi0", 1)
-plot_svi1 <- plot_posterior(sampling_data, "samplingRateSVi1", 2)
-plot_svi2 <- plot_posterior(sampling_data, "samplingRateSVi2", 3)
+plot_svi0 <- plot_posterior(sampling_data, "samplingRateSVi0", true_values[1])
+plot_svi1 <- plot_posterior(sampling_data, "samplingRateSVi1", true_values[2])
+plot_svi2 <- plot_posterior(sampling_data, "samplingRateSVi2", true_values[3])
 
 # Save all separately 
 save_plot(plot_svi0, "posterior_samplingRateSVi0.png")
@@ -82,3 +84,17 @@ save_plot(plot_svi2, "posterior_samplingRateSVi2.png")
 pdf("posterior_distributions.pdf", width = 10, height = 12)
 grid.arrange(plot_svi0, plot_svi1, plot_svi2, ncol = 1)
 dev.off()
+
+# Violin plot with all methods and parameters
+plot <- ggplot(sampling_data, aes(x = Parameter, y = Value, fill = Source)) +
+  geom_violin(alpha = 0.7, scale="width") +
+  geom_hline(yintercept = true_values, linetype = "dashed", color = "red") +
+  labs(title = "Comparison of Posterior Distributions for Different Methods",
+       x = "Parameter",
+       y = "Estimated Values",
+       fill = "Method") +
+  theme_minimal()
+
+# Save violin plot
+ggsave("violin_comparison.pdf", plot, width = 10, height = 6, dpi = 300)
+

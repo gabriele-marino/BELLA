@@ -133,13 +133,7 @@ public class BayesMLP extends CalculationNode implements Function {
             if (!isEqual) {
                     weightMatrices[i].assign(Nd4j.create(weights.get(i).getDoubleValues()));
                     updated = true;
-//                    break;
             }
-//            if (weights.get(i).somethingIsDirty()) {
-//                // Update the corresponding weight matrix
-//                weightMatrices[i].assign(Nd4j.create(weights.get(i).getDoubleValues()));
-//                updated = true;
-//            }
         }
 
         if (updated) {
@@ -149,11 +143,10 @@ public class BayesMLP extends CalculationNode implements Function {
 
     private void recalculate() {
         if (nLayers == 0) {
-            output = predictors.mmul(weightMatrices[0]);
+            output = runLayer(predictors, weightMatrices[nLayers], BayesMLP::softplus);
+//            output = predictors.mmul(weightMatrices[0]);
             return;
         }
-
-//        output = predictors.dup();  // Avoid modifying predictors directly
 
         // Hidden layers
         for (int l = 0; l < nLayers; l++) {

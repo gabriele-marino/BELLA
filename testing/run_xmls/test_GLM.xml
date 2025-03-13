@@ -33,8 +33,7 @@
 
     <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="$(chainLength=100000)">
         <state id="state">
-<!--            <parameter id="samplingRate" lower="0.0" name="stateNode" dimension="3">0.5</parameter>-->
-            <parameter id="origin" lower="0.0" name="stateNode">0.17819</parameter>
+            <parameter id="origin" lower="0.0" name="stateNode">0.19624</parameter>
             <plate var="n" range="$(range=1)">
                 <parameter spec="RealParameter" name="stateNode" id="w$(n)" value="0.01"/>
             </plate>
@@ -56,17 +55,16 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="glmprior.util.GLMLogLinear" transform="true">
-                                <predictor spec="RealParameter" value="4 8 12"/>
+                            <skylineValues id="samplingRate" spec="glmprior.util.GLMLogLinear" transform="false">
+                                <predictor spec="RealParameter" value="-2.77258872 1.62186043 2.77258872"/>
                                 <plate var="n" range="$(range)">
                                       <coefficients idref="w$(n)"/>
                                 </plate>
-<!--                                <coefficients idref="w1"/>-->
                                 <indicators spec="BooleanParameter" value="1"/>
                             </skylineValues>
                         </samplingRate>
                         <removalProb spec="SkylineVectorParameter">
-                            <skylineValues spec="RealParameter" value="0.0"/>
+                            <skylineValues spec="RealParameter" value="1.0"/>
                         </removalProb>
                     </parameterization>
                 </distribution>
@@ -75,9 +73,6 @@
             <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
                 <prior id="samplingRatePrior" name="distribution" x="@samplingRate">
                     <Uniform name="distr" upper="100"/>
-<!--                    <Exponential name="distr">-->
-<!--                        <parameter id="RealParameter.1" spec="RealParameter" estimate="false" name="mean">1.0</parameter>-->
-<!--                    </Exponential>-->
                 </prior>
                 <prior id="weightsPrior1" name="distribution" x="@w1">
                     <Normal name="distr">
@@ -85,21 +80,12 @@
                         <parameter spec="RealParameter" estimate="false" name="sigma">2.0</parameter>
                     </Normal>
                 </prior>
-<!--                <prior id="weightsPrior2" name="distribution" x="@w2">-->
-<!--                    <Normal name="distr">-->
-<!--                        <parameter spec="RealParameter" estimate="false" name="mean">0.0</parameter>-->
-<!--                        <parameter spec="RealParameter" estimate="false" name="sigma">2.0</parameter>-->
-<!--                    </Normal>-->
-<!--                </prior>-->
             </distribution>
         </distribution>
 
-<!--        <operator id="originScaler" spec="ScaleOperator" parameter="@origin" scaleFactor="0.75" weight="3.0"/>-->
         <plate var="n" range="$(range)">
             <operator id="weightsScaler$(n)" spec="BactrianRandomWalkOperator" parameter="@w$(n)" weight="30.0" scaleFactor="0.75"/>
         </plate>
-<!--        <operator id="weightsScaler1" spec="BactrianRandomWalkOperator" parameter="@w1" weight="30.0" scaleFactor="0.75"/>-->
-<!--        <operator id="weightsScaler2" spec="BactrianRandomWalkOperator" parameter="@w2" weight="30.0" scaleFactor="0.75"/>-->
 
         <logger id="tracelog" spec="Logger" fileName="$(filebase)_$(seed).log" logEvery="$(logEvery=50)" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
