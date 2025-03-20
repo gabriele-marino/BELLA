@@ -7,11 +7,13 @@ import beast.base.inference.CalculationNode;
 import beast.base.inference.parameter.RealParameter;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 
 @Description("Designed to be used within Beast2." +
@@ -30,45 +32,34 @@ public class BayesMLP extends CalculationNode implements Function {
     public Input<ArrayList<RealParameter>> weightsInput = new Input<>("weights",
             "GLM_ML weights for each layer (hidden and output).",new ArrayList<>(), Input.Validate.REQUIRED);
 
-//    public Input<IntegerParameter> nOutputsInput = new Input<>("nOutputs",
-//            "GLM_ML number of outputs the output layer. Default is 1.");
-    public Input<Integer> layersInput = new Input<>("layers",
-            "Number of hidden layers in GLM_ML. Default is 1.", 1);
+        public Input<Boolean> useBiasInAll = new Input<>("useBiasInAll",
+                "Should we use bias term for all layers. If false, bias term is used only in output layer.",
+                true, Input.Validate.OPTIONAL);
 
     public Input<List<Integer>> nodesInput = new Input<>("nodes",
-            "Number of nodes in each hidden layer in GLM_ML.", new ArrayList<>());
-
-
-
-    // TODO Maybe have some of the below in the future
-    // Different activation functions?
-//    public Input<BooleanParameter> indicatorsInput = new Input<>("indicators",
-//            "Indicators for predictor inclusion/exclusion in GLM.", Input.Validate.REQUIRED);
-//    public Input<RealParameter> scaleFactorInput = new Input<>("scaleFactor",
-//            "Scale factor.", new RealParameter("1.0"), Input.Validate.OPTIONAL);
-//
-//    public Input<RealParameter> errorInput = new Input<>("error",
-//            "Error terms.", Input.Validate.OPTIONAL);
-//
-//    public Input<Boolean> transformInput = new Input<>("transform",
-//            "Boolean value to log transform and scale predictors. Default true.", false,
-//            Input.Validate.OPTIONAL);
+            "Number of nodes in each hidden and output layer in GLM_ML.", new ArrayList<>(), Input.Validate.REQUIRED);
 
 
     INDArray predictors;
-    INDArray inputData;
-    INDArray output;
-    ArrayList<RealParameter> weights;
-    int parameterSize, nPredictor; // parameter size as instances in the original example
-    int nLayers;
 
+    int nonOutputBiasTerm = 1;
+
+    ArrayList<RealParameter> weights;
+    int parameterSize;
+    int nPredictor;
+    int nLayers; // parameter size as instances in the original example
     private INDArray[] weightMatrices;
+    INDArray output;
     private boolean needsRecalculation = true;
 
     @Override
     public void initAndValidate() {
         nPredictor = predictorsInput.get().size();
         parameterSize = predictorsInput.get().get(0).getDimension();
+
+        if (!useBiasInAll.get())
+            nonOutputBiasTerm = 0; // If bias term is not used in all layers, then it is only used in the output layer
+
 
         for (RealParameter pred : predictorsInput.get()) {
             if (parameterSize != pred.getDimension()) {
@@ -78,35 +69,44 @@ public class BayesMLP extends CalculationNode implements Function {
         }
 
         List<Integer> nodes = nodesInput.get();
-        nLayers = layersInput.get();
-
-        if (nLayers >0 && nodes.size() != nLayers) {
-            throw new IllegalArgumentException("GLM number of nodes do not match number of layers " +
-                    nodes.size() + "!=" + nLayers);
-        }
+        if (nodesInput.get().size() == 0)
+            throw new IllegalArgumentException("Size of nodes vector must be at least one to note nodes in the output layer.");
+        nLayers = nodes.size()-1;
 
         predictors = Nd4j.create(convertToDoubleArray(predictorsInput.get())).transpose();
         weights = weightsInput.get();
-//        nOutputs = nOutputsInput.get().getValue();
+
+
         Integer[] nWeights = new Integer[weights.size()];
 
         if (nLayers == 0) {
-            weights.get(0).setDimension(nPredictor);
+            weights.get(0).setDimension(nPredictor+1); // output always has bias term, hence +1
         } else {
             for (int i = 0; i < nLayers; i++) {
                 if (i == 0) {
-                    nWeights[i] = nPredictor * nodes.get(0);
+                    nWeights[i] = (nPredictor + nonOutputBiasTerm) * nodes.get(0);
                 } else {
-                    nWeights[i] = nodes.get(i - 1) * nodes.get(i);
+                    nWeights[i] = (nodes.get(i - 1) + nonOutputBiasTerm)* nodes.get(i);
                 }
                 weights.get(i).setDimension(nWeights[i]);
             }
-            weights.get(nLayers).setDimension(nodes.get(nLayers - 1));
+            weights.get(nLayers).setDimension(nodes.get(nLayers - 1)+1); // output always has bias term, hence +1
         }
+        initializeMatrices();
+    }
 
-        // Initialize weight matrices array
+    private void initializeMatrices() {
         weightMatrices = new INDArray[nLayers + 1];
-        updateWeightMatrices();
+        for (int i = 0; i <= nLayers; i++) {
+            weightMatrices[i] = Nd4j.create(weights.get(i).getDoubleValues()).reshape(getLayerShape(i));
+        }
+    }
+
+    private int[] getLayerShape(int layer) {
+        if (nLayers == 0) return new int[]{nPredictor+1, nodesInput.get().get(0)}; // output always gets bias, so +1
+        if (layer == 0) return new int[]{nPredictor+nonOutputBiasTerm, nodesInput.get().get(0)};
+        if (layer == nLayers) return new int[]{nodesInput.get().get(layer - 1)+1, 1};// output always gets bias, so +1
+        return new int[]{nodesInput.get().get(layer - 1)+nonOutputBiasTerm, nodesInput.get().get(layer)}; // bias in hidden layer only if nonOutputBiasTerm!=0
     }
 
     @Override
@@ -144,7 +144,6 @@ public class BayesMLP extends CalculationNode implements Function {
     private void recalculate() {
         if (nLayers == 0) {
             output = runLayer(predictors, weightMatrices[nLayers], BayesMLP::softplus);
-//            output = predictors.mmul(weightMatrices[0]);
             return;
         }
 
@@ -175,23 +174,16 @@ public class BayesMLP extends CalculationNode implements Function {
     }
 
     private static INDArray runLayer(INDArray x1, INDArray x2, java.util.function.Function<INDArray, INDArray> activationFunction) {
-        INDArray z = x1.mmul(x2);
-        return (activationFunction != null) ? activationFunction.apply(z) : z;
-    }
-
-    private void updateWeightMatrices() {
-        if (nLayers == 0) {
-            weightMatrices[0] = Nd4j.create(weights.get(0).getDoubleValues()).reshape(nPredictor, 1);
+        INDArray z;
+        if (x1.columns() == x2.rows()) {
+            z = x1.mmul(x2);
         } else {
-            for (int i = 0; i < nLayers; i++) {
-                if (i == 0) {
-                    weightMatrices[i] = Nd4j.create(weights.get(0).getDoubleValues()).reshape(nPredictor, nodesInput.get().get(0));
-                } else {
-                    weightMatrices[i] = Nd4j.create(weights.get(i).getDoubleValues()).reshape(nodesInput.get().get(i - 1), nodesInput.get().get(i));
-                }
-            }
-            weightMatrices[nLayers] = Nd4j.create(weights.get(nLayers).getDoubleValues()).reshape(nodesInput.get().get(nLayers - 1), 1);
+            INDArray weights = x2.get(NDArrayIndex.interval(1, x2.rows()), NDArrayIndex.all()); //exclude bias
+            z = x1.mmul(weights);
+            INDArray bias = x2.getRow(0); // add bias
+            z.addiRowVector(bias);
         }
+        return (activationFunction != null) ? activationFunction.apply(z) : z;
     }
 
 

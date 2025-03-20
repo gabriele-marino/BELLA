@@ -34,6 +34,7 @@
     <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="$(chainLength=100000)">
         <state id="state">
             <parameter id="origin" lower="0.0" name="stateNode">0.19624</parameter>
+            <parameter id="scaler" name="stateNode">1.0</parameter>
             <plate var="n" range="$(range=1)">
                 <parameter spec="RealParameter" name="stateNode" id="w$(n)" value="0.01"/>
             </plate>
@@ -55,7 +56,7 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="glmprior.util.GLMLogLinear" transform="false">
+                            <skylineValues id="samplingRate" spec="glmprior.util.GLMLogLinear" scaleFactor="@scaler"  transform="false">
                                 <predictor spec="RealParameter" value="-2.77258872 1.62186043 2.77258872"/>
                                 <plate var="n" range="$(range)">
                                       <coefficients idref="w$(n)"/>
@@ -87,6 +88,10 @@
             <operator id="weightsScaler$(n)" spec="BactrianRandomWalkOperator" parameter="@w$(n)" weight="30.0" scaleFactor="0.75"/>
         </plate>
 
+        <operator id="scalerScale" spec="BactrianRandomWalkOperator" parameter="@scaler" weight="4.0" scaleFactor="0.75"/>
+
+
+
         <logger id="tracelog" spec="Logger" fileName="$(filebase)_$(seed).log" logEvery="$(logEvery=50)" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
@@ -101,6 +106,7 @@
             <plate var="n" range="$(range)">
                 <log idref="w$(n)"/>
             </plate>
+            <log idref="scaler"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="$(logEvery)">

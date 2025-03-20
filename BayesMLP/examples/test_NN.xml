@@ -55,7 +55,7 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="bayesmlp.priors.BayesMLP" layers="$(nLayers=0)" nodes="$(nNodes=1)">
+                            <skylineValues id="samplingRate" spec="bayesmlp.priors.BayesMLP" nodes="$(nNodes=1)">
                                 <predictor spec="RealParameter" value="4 8 12"/>
 <!--                                <predictor spec="RealParameter" value="1 2 3"/>-->
                                 <plate var="n" range="$(range)">

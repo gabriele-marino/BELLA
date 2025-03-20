@@ -1,28 +1,29 @@
-# IntelliJ cruft
-/out/
-/.idea
-/*.iml
-/lib/
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-# Eclipse
+### Eclipse ###
+.apt_generated
 .classpath
+.factorypath
 .project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
-# Misc cruft
-/META-INF
-/bin
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
-# Ant build script
-/build
-/build-lib
-/dist
+### VS Code ###
+.vscode/
 
-# Temporary tests and BEAST log files
-*.state
-*.trees
-*.log
-*.newick
-*.nexus
-
-# MacOS cruft
-*.DS_Store
+### Mac OS ###
+.DS_Store
