@@ -2,13 +2,13 @@
 
     <run spec="Simulator" nSims="1">
         <simulate spec="SimulatedTree" id="SIRTree">
-            <trajectory spec="StochasticTrajectory" id="SIRTrajectory" endsWhen="sample>=100">
+            <trajectory spec="StochasticTrajectory" id="SIRTrajectory" endsWhen="sample>=150">
                 <population spec="RealParameter" id="X" value="1"/>
                 <samplePopulation spec="RealParameter" id="sample" value="0"/>
 
                 <reaction spec="Reaction" rate="72"> X -> 2X </reaction>
                 <reaction spec="Reaction" rate="32"> X -> 0 </reaction>
-                <reaction spec="Reaction" rate="0.5 1.5 2" changeTimes="0.1 0.15"> X -> sample </reaction>
+                <reaction spec="Reaction" rate="0.5 1.5 2" changeTimes="0.13 0.17"> X -> sample </reaction>
             </trajectory>
         </simulate>
 
