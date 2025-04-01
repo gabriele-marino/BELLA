@@ -7,16 +7,20 @@ This repository is to be intended as a work in progress.
 ### Repository structure
 
 ```
-NNvsGLM/
-├
-├── remaster/  # Simulation files for ReMASTER
-│   ├── README.md
-│   ├── ...
-│
-├── data/      # Data
-│
-├── README.md
-├── .gitignore
+├── BayesMLP # BEAST package for Bayesian MLP as rates prior. 
+│   ├── examples
+│   ├── lib
+│   ├── src
+│   │   ├── META-INF
+│   │   └── bayesmlp
+│   │       └── priors
+│   └── test
+├── data
+└── testing #simulations for  initial testing of the implementation
+    ├── out_figs #BDMM-Prime, GLM and BayesMLP comparison figures
+    ├── out_logs #BDMM-Prime, GLM and BayesMLP comparison logs
+    ├── remaster_sims # BD-sampling simulation
+    └── run_xmls # xmls for BDMM-Prime, GLM and BayesMLP
 ```
 
 ### References
