@@ -128,9 +128,7 @@ public class BayesMLP extends CalculationNode implements Function {
         boolean updated = false;
 
         for (int i = 0; i < weights.size(); i++) {
-            double[] w = weightMatrices[i].data().asDouble();
-            boolean isEqual = Arrays.mismatch(w, weights.get(i).getDoubleValues()) == -1;
-            if (!isEqual) {
+            if (weights.get(i).somethingIsDirty()) {
                     weightMatrices[i].assign(Nd4j.create(weights.get(i).getDoubleValues()));
                     updated = true;
             }

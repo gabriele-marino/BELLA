@@ -35,7 +35,7 @@ class BayesMLPTests {
         weights.add(new RealParameter("0.7 0.8")); // Output layer
 
         // Define outputs and layers
-        nOutputs = new IntegerParameter("1");
+//        nOutputs = new IntegerParameter("1");
         layers = 2; // One hidden layer
         nodes = Arrays.asList(2, 2); // One hidden layer with 2 nodes
 
@@ -43,7 +43,6 @@ class BayesMLPTests {
         bayesMLP = new BayesMLP();
         bayesMLP.predictorsInput.setValue(predictors, bayesMLP);
         bayesMLP.weightsInput.setValue(weights, bayesMLP);
-        bayesMLP.layersInput.setValue(layers, bayesMLP);
         bayesMLP.nodesInput.setValue(nodes, bayesMLP);
 
         bayesMLP.initAndValidate();
@@ -53,7 +52,6 @@ class BayesMLPTests {
     void testInitializationValidInputs() {
         assertNotNull(bayesMLP);
         assertEquals(2, bayesMLP.predictorsInput.get().size());
-        assertEquals(2, bayesMLP.layersInput.get());
         assertEquals(2, bayesMLP.nodesInput.get().size());
         assertEquals(2, bayesMLP.nodesInput.get().get(0));
     }
@@ -62,12 +60,6 @@ class BayesMLPTests {
     void testInvalidPredictorDimension() {
         predictors.add(new RealParameter("4.0")); // Mismatched dimension
         bayesMLP.predictorsInput.setValue(predictors, bayesMLP);
-        assertThrows(IllegalArgumentException.class, bayesMLP::initAndValidate);
-    }
-
-    @Test
-    void testInvalidNodesLayerMismatch() {
-        bayesMLP.layersInput.setValue(5, bayesMLP);
         assertThrows(IllegalArgumentException.class, bayesMLP::initAndValidate);
     }
 
