@@ -26,7 +26,7 @@ public class BayesMLP extends CalculationNode implements Function {
                     "If exactly one is supplied, all hidden layers use this function." +
                     "If the list size is larger, one activation function per layer must be supplied (they may be the same)." +
                     "Default: relu for all hidden layers", new ArrayList<>(),
-            Input.Validate.REQUIRED);
+            Input.Validate.OPTIONAL);
 
     public Input<ActivationFunction> activationOutputInput = new Input<>("activationFunctionsOutput",
             "Activation functions for the output layer." +
