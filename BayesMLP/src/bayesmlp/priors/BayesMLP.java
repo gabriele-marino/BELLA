@@ -32,7 +32,7 @@ public class BayesMLP extends CalculationNode implements Function {
     public Input<ArrayList<RealParameter>> weightsInput = new Input<>("weights",
             "GLM_ML weights for each layer (hidden and output).",new ArrayList<>(), Input.Validate.REQUIRED);
 
-        public Input<Boolean> useBiasInAllInput = new Input<>("useBiasInAll",
+    public Input<Boolean> useBiasInAllInput = new Input<>("useBiasInAll",
                 "Should we use bias term for all layers. If false, bias term is used only in output layer.",
                 true, Input.Validate.OPTIONAL);
 
@@ -128,9 +128,13 @@ public class BayesMLP extends CalculationNode implements Function {
         boolean updated = false;
 
         for (int i = 0; i < weights.size(); i++) {
-            if (weights.get(i).somethingIsDirty()) {
+            RealParameter w = weights.get(i);
+            for (int j=0; j < w.getDimension(); j++){
+                if (w.getValue(j) != weightMatrices[i].getDouble(j)){
                     weightMatrices[i].assign(Nd4j.create(weights.get(i).getDoubleValues()));
                     updated = true;
+                    break;
+                }
             }
         }
 
