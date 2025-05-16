@@ -27,15 +27,15 @@
           IsLabelledNewick="true" adjustTipHeights="false">
     </tree>
 
-    <changeTimes id="changeTimes" spec="RealParameter" value="0.1 0.15"/>
+    <changeTimes id="changeTimes" spec="RealParameter" value="0.13 0.17"/>
     <parameter id="birthRate" spec="RealParameter" value="72"/>
     <parameter id="deathRate" spec="RealParameter" value="32"/>
 
     <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="$(chainLength=100000)">
         <state id="state">
-            <parameter id="origin" lower="0.0" name="stateNode">0.17819</parameter>
+            <parameter id="origin" lower="0.0" name="stateNode">0.19932</parameter>
             <plate var="n" range="$(range=1)">
-                <parameter spec="RealParameter" name="stateNode" id="w$(n)" value="0.01"/>
+                <parameter spec="RealParameter" name="stateNode" id="w$(n)" value="0.25"/>
             </plate>
             <stateNode idref="tree"/>
         </state>
@@ -55,16 +55,16 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="bayesmlp.BayesMLP" nodes="$(nNodes=1)">
-                                <predictor spec="RealParameter" value="4 8 12"/>
-<!--                                <predictor spec="RealParameter" value="1 2 3"/>-->
+                            <skylineValues id="samplingRate" spec="bayesmlp.BayesMLP" nodes="$(nNodes=1)" useBiasInAll="true">
+                                <predictor spec="RealParameter" value="-1.73100852 4.99007016 7.41834617"/>
+<!--                                <predictor spec="RealParameter" value="1.5 4.5 6"/>-->
                                 <plate var="n" range="$(range)">
                                     <weights idref="w$(n)"/>
                                 </plate>
                             </skylineValues>
                         </samplingRate>
                         <removalProb spec="SkylineVectorParameter">
-                            <skylineValues spec="RealParameter" value="0.0"/>
+                            <skylineValues spec="RealParameter" value="1.0"/>
                         </removalProb>
                     </parameterization>
                 </distribution>
@@ -86,10 +86,11 @@
         </distribution>
 
         <plate var="n" range="$(range)">
-            <operator id="weightsScaler$(n)" spec="BactrianRandomWalkOperator" parameter="@w$(n)" weight="30.0" scaleFactor="0.75"/>
+<!--            <operator id="weightsScaler$(n)" spec="ScaleOperator" scaleAllIndependently="true" parameter="@w$(n)" weight="30.0" scaleFactor="0.75"/>-->
+            <operator id="weightsWalker$(n)" spec="beast.base.inference.operator.RealRandomWalkOperator" parameter="@w$(n)" weight="30.0" windowSize="0.75"/>
         </plate>
 
-        <logger id="tracelog" spec="Logger" fileName="$(filebase)_$(nLayers)_$(seed).log" logEvery="$(logEvery=50)" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="$(filebase)_$(seed).log" logEvery="$(logEvery=1000)" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
