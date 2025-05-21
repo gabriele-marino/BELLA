@@ -6,16 +6,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class Sigmoid extends ActivationFunction {
 
     public Input<Double> lowerInput = new Input<>("lower",
-            "Lower bound for sigmoid scaling", 0.0);
+            "Lower bound for sigmoid scaling. Default 0.0.", 0.0);
 
     public Input<Double> upperInput = new Input<>("upper",
-            "Upper bound for sigmoid scaling", 1.0);
+            "Upper bound for sigmoid scaling. Default 1.0.", 1.0);
 
     public Input<Double> sInput = new Input<>("shape",
-            "Shape (steepness). Larger values mean transition is steeper.", 1.0);
+            "Shape (steepness). Larger values mean transition is steeper. Default 1.0.", 1.0);
 
     public Input<Double> midInput = new Input<>("midpoint",
-            "Midpoint: the value of input at which the output is halfway between lower and upper",
+            "Midpoint: the value of input at which the output is halfway between lower and upper. Default 0.0.",
             0.0);
 
 
