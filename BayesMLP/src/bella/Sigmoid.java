@@ -1,4 +1,4 @@
-package bayesmlp;
+package bella;
 
 import beast.base.core.Input;
 import beast.base.inference.parameter.RealParameter;
@@ -35,7 +35,7 @@ public class Sigmoid extends ActivationFunction {
     public void initAndValidate() {
         upper = upperInput.get().doubleValue();
         lower = lowerInput.get().doubleValue();
-        if (lower >= upper){
+        if (lower >= upper) {
             throw new IllegalArgumentException("Lower bound should not be less than upper bound.");
         }
         s = sInput.get();

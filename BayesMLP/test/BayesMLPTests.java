@@ -1,4 +1,4 @@
-import bayesmlp.*;
+import bella.*;
 import beast.base.inference.parameter.RealParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package bayesmlp;
+package bella;
 
 
 import beast.base.inference.CalculationNode;

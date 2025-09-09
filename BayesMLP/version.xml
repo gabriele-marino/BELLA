@@ -3,10 +3,10 @@
     <depends on="BEAST.app" atleast="2.7.0" atmost="2.7.9"/>
 
     <service type="beast.base.core.BEASTInterface">
-        <provider classname="bayesmlp.BayesMLP"/>
-        <provider classname="bayesmlp.ReLu"/>
-        <provider classname="bayesmlp.SoftPlus"/>
-        <provider classname="bayesmlp.Sigmoid"/>
+        <provider classname="bella.BayesMLP"/>
+        <provider classname="bella.ReLu"/>
+        <provider classname="bella.SoftPlus"/>
+        <provider classname="bella.Sigmoid"/>
     </service>
 
 </addon>

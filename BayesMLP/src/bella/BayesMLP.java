@@ -1,5 +1,5 @@
 // Migrated from ND4J to Apache Commons Math
-package bayesmlp;
+package bella;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -10,8 +10,6 @@ import org.apache.commons.math3.linear.*;
 import beast.base.core.Function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 @Description("Designed to be used within Beast2. This is a version without ND4J, using Apache Commons Math.")
@@ -70,15 +68,15 @@ public class BayesMLP extends CalculationNode implements Function {
         nHiddenLayers = nodes.size() - 1;
 
         activationFunctionsHidden = activationHiddenInput.get();
-        if (activationFunctionsHidden.size()==0){
+        if (activationFunctionsHidden.size() == 0) {
             Log.warning("No hidden layer activation function provided. Using " +
                     DEFAULT_ACTIVATION_FUNCTION_HIDDEN.toString() + ".");
             activationFunctionsHidden.add(DEFAULT_ACTIVATION_FUNCTION_HIDDEN);
         }
-        if (activationFunctionsHidden.size() == 1 && nHiddenLayers > 1){
+        if (activationFunctionsHidden.size() == 1 && nHiddenLayers > 1) {
             Log.info.println("All hidden layers use activation function: " +
                     activationFunctionsHidden.get(0).toString() + ".");
-            for (int i=1; i<nHiddenLayers; i++){
+            for (int i = 1; i < nHiddenLayers; i++) {
                 activationFunctionsHidden.add(activationFunctionsHidden.get(0));
             }
         } else {
@@ -86,7 +84,7 @@ public class BayesMLP extends CalculationNode implements Function {
                 throw new IllegalArgumentException("Number of activation functions for hidden layers" +
                         " is larger than one but not equal to number of hidden layers.");
 
-            for (int i=0; i<nHiddenLayers;i++)
+            for (int i = 0; i < nHiddenLayers; i++)
                 Log.info("Activation function for hidden layer " + i + ": " +
                         activationFunctionsHidden.get(i).toString() + ".");
         }
@@ -176,10 +174,6 @@ public class BayesMLP extends CalculationNode implements Function {
         }
         output = runLayer(layerOut, weightMatrices[nHiddenLayers], activationFunctionOutput);
     }
-
-
-
-
 
     private RealMatrix runLayer(RealMatrix input, RealMatrix weights, ActivationFunction activation) {
         if (input.getColumnDimension() == weights.getRowDimension()) {

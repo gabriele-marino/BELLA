@@ -1,4 +1,4 @@
-package bayesmlp;
+package bella;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -24,6 +24,4 @@ public class ReLu extends ActivationFunction {
     public String toString() {
         return "relu";
     }
-
-
 }

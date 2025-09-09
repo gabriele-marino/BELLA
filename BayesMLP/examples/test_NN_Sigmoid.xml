@@ -55,13 +55,13 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="bayesmlp.BayesMLP" nodes="$(nNodes=1)" useBiasInAll="true">
+                            <skylineValues id="samplingRate" spec="bella.BayesMLP" nodes="$(nNodes=1)" useBiasInAll="true">
                                 <predictor spec="RealParameter" value="-1.73100852 4.99007016 7.41834617"/>
                                 <!--                                <predictor spec="RealParameter" value="1.5 4.5 6"/>-->
                                 <plate var="n" range="$(range)">
                                     <weights idref="w$(n)"/>
                                 </plate>
-                                <activationFunctionsOutput spec="bayesmlp.Sigmoid" lower="0.0" upper="1.0"/>
+                                <activationFunctionsOutput spec="bella.Sigmoid" lower="0.0" upper="1.0"/>
                             </skylineValues>
                         </samplingRate>
                         <removalProb spec="SkylineVectorParameter">
