@@ -1,4 +1,3 @@
-// Migrated from ND4J to Apache Commons Math
 package bella;
 
 import beast.base.core.Description;
@@ -12,7 +11,7 @@ import beast.base.core.Function;
 import java.util.ArrayList;
 import java.util.List;
 
-@Description("Designed to be used within Beast2. This is a version without ND4J, using Apache Commons Math.")
+@Description("Bayesian multi layer perceptron designed to be used within Beast2.")
 public class BayesMLP extends CalculationNode implements Function {
 
     public Input<ArrayList<RealParameter>> predictorsInput = new Input<>("predictor", "Predictors", new ArrayList<>(), Input.Validate.REQUIRED);
@@ -23,12 +22,12 @@ public class BayesMLP extends CalculationNode implements Function {
             "Activation functions for hidden layers. Can only be empty if there are no hidden layers." +
                     "If exactly one is supplied, all hidden layers use this function." +
                     "If the list size is larger, one activation function per layer must be supplied (they may be the same)." +
-                    "Default: relu for all hidden layers", new ArrayList<>(),
+                    "Default: sigmoid for all hidden layers", new ArrayList<>(),
             Input.Validate.OPTIONAL);
 
     public Input<ActivationFunction> activationOutputInput = new Input<>("activationFunctionsOutput",
             "Activation functions for the output layer." +
-                    "Default: softplus.", new SoftPlus(), Input.Validate.REQUIRED);
+                    "Default: sigmoid.", new Sigmoid(), Input.Validate.REQUIRED);
 
 
     RealMatrix predictors;
@@ -42,7 +41,7 @@ public class BayesMLP extends CalculationNode implements Function {
     boolean needsRecalculation = true;
     int[][] shapes;
     ArrayList<ActivationFunction> activationFunctionsHidden;
-    ActivationFunction DEFAULT_ACTIVATION_FUNCTION_HIDDEN = new ReLu();
+    ActivationFunction DEFAULT_ACTIVATION_FUNCTION_HIDDEN = new Sigmoid();
     ActivationFunction activationFunctionOutput;
 
     @Override
