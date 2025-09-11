@@ -34,9 +34,7 @@
     <run id="mcmc" spec="beast.base.inference.MCMC" chainLength="$(chainLength=100000)">
         <state id="state">
             <parameter id="origin" lower="0.0" name="stateNode">0.19932</parameter>
-            <plate var="n" range="$(range=1)">
-                <parameter spec="RealParameter" name="stateNode" id="w$(n)" value="0.25"/>
-            </plate>
+            <parameter spec="RealParameter" name="stateNode" id="w" value="0.25"/>
             <stateNode idref="tree"/>
         </state>
 
@@ -55,12 +53,12 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-                            <skylineValues id="samplingRate" spec="bella.BayesMLP" nodes="$(nNodes=1)" useBiasInAll="true">
+<!--                            nodes="$(nNodes=2)"-->
+                            <skylineValues id="samplingRate" spec="bella.BayesMLP"  useBiasInAll="true">
                                 <predictor spec="RealParameter" value="-1.73100852 4.99007016 7.41834617"/>
 <!--                                <predictor spec="RealParameter" value="1.5 4.5 6"/>-->
-                                <plate var="n" range="$(range)">
-                                    <weights idref="w$(n)"/>
-                                </plate>
+                                <weights idref="w"/>
+                                <activationFunctionsOutput spec="bella.Sigmoid" lower="0.0" upper="3.0"/>
                             </skylineValues>
                         </samplingRate>
                         <removalProb spec="SkylineVectorParameter">
@@ -74,21 +72,17 @@
                 <prior id="samplingRatePrior" name="distribution" x="@samplingRate">
                     <Uniform name="distr" upper="100"/>
                 </prior>
-                <plate var="n" range="$(range)">
-                                <prior id="weightsPrior$(n)" name="distribution" x="@w$(n)">
-                                    <Normal name="distr">
-                                        <parameter spec="RealParameter" estimate="false" name="mean">0.0</parameter>
-                                        <parameter spec="RealParameter" estimate="false" name="sigma">2.0</parameter>
-                                    </Normal>
-                                </prior>
-                </plate>
+                <prior id="weightsPrior" name="distribution" x="@w">
+                    <Normal name="distr">
+                        <parameter spec="RealParameter" estimate="false" name="mean">0.0</parameter>
+                        <parameter spec="RealParameter" estimate="false" name="sigma">2.0</parameter>
+                    </Normal>
+                </prior>
             </distribution>
         </distribution>
 
-        <plate var="n" range="$(range)">
 <!--            <operator id="weightsScaler$(n)" spec="ScaleOperator" scaleAllIndependently="true" parameter="@w$(n)" weight="30.0" scaleFactor="0.75"/>-->
-            <operator id="weightsWalker$(n)" spec="beast.base.inference.operator.RealRandomWalkOperator" parameter="@w$(n)" weight="30.0" windowSize="0.75"/>
-        </plate>
+        <operator id="weightsWalker$(n)" spec="beast.base.inference.operator.RealRandomWalkOperator" parameter="@w" weight="30.0" windowSize="0.75"/>
 
         <logger id="tracelog" spec="Logger" fileName="$(filebase)_$(seed).log" logEvery="$(logEvery=1000)" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
@@ -101,9 +95,7 @@
             <log idref="origin"/>
 
             <!-- GLM parameters -->
-            <plate var="n" range="$(range)">
-                <log idref="w$(n)"/>
-            </plate>
+            <log idref="w"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="$(logEvery)">

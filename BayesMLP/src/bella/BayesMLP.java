@@ -17,13 +17,13 @@ public class BayesMLP extends CalculationNode implements Function {
     public Input<ArrayList<RealParameter>> predictorsInput = new Input<>("predictor", "Predictors", new ArrayList<>(), Input.Validate.REQUIRED);
     public Input<RealParameter> weightsInput = new Input<>("weights", "Flattened weights vector containing all layer weights sequentially", Input.Validate.REQUIRED);
     public Input<Boolean> useBiasInAllInput = new Input<>("useBiasInAll", "Bias for all layers?", true, Input.Validate.OPTIONAL);
-    public Input<List<Integer>> nodesInput = new Input<>("nodes", "Hidden layer nodes", new ArrayList<>(), Input.Validate.REQUIRED);
+    public Input<List<Integer>> nodesInput = new Input<>("nodes", "Hidden layer nodes", new ArrayList<>(), Input.Validate.OPTIONAL);
     public Input<Integer> outputNodes = new Input<>("outNodes", "Output layer nodes", 1, Input.Validate.OPTIONAL);
     public Input<ArrayList<ActivationFunction>> activationHiddenInput = new Input<>("activationFunctionsHidden",
             "Activation functions for hidden layers. Can only be empty if there are no hidden layers." +
                     "If exactly one is supplied, all hidden layers use this function." +
                     "If the list size is larger, one activation function per layer must be supplied (they may be the same)." +
-                    "Default: relu for all hidden layers", new ArrayList<>(),
+                    "Default: relu for all hidden layers.", new ArrayList<>(),
             Input.Validate.OPTIONAL);
 
     public Input<ActivationFunction> activationOutputInput = new Input<>("activationFunctionsOutput",

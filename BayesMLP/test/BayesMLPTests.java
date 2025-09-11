@@ -1,5 +1,6 @@
 import bella.*;
 import beast.base.inference.parameter.RealParameter;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,8 @@ public class BayesMLPTests {
         return Stream.of(
                 new Object[]{"SoftPlus", new SoftPlus(), 0.0, Double.POSITIVE_INFINITY},
                 new Object[]{"Sigmoid[-1,2]", new Sigmoid(), -1.0, 2.0},
-                new Object[]{"Sigmoid[0,1]", new Sigmoid(), 0.0, 1.0}
+                new Object[]{"Sigmoid[0,1]", new Sigmoid(), 0.0, 1.0},
+                new Object[]{"Tanh", new Tanh(), -1.0, 1.0}
         );
     }
 
@@ -152,6 +154,51 @@ public class BayesMLPTests {
         // Also verify the output is still valid
         double output = mlp.getArrayValue(0);
         assertFalse(Double.isNaN(output), "Neural network output should not be NaN");
+    }
+
+    @Test
+    void testTanhActivationFunction() {
+        Tanh tanh = new Tanh();
+        
+        // Create test matrix with known values
+        RealMatrix testMatrix = MatrixUtils.createRealMatrix(new double[][]{
+            {0.0, 1.0, -1.0},
+            {2.0, -2.0, 0.5}
+        });
+        
+        RealMatrix result = tanh.apply(testMatrix);
+        
+        double tolerance = 1e-10;
+        
+        // Test known tanh values
+        assertEquals(Math.tanh(0.0), result.getEntry(0, 0), tolerance, "tanh(0) should be 0");
+        assertEquals(Math.tanh(1.0), result.getEntry(0, 1), tolerance, "tanh(1) should be ~0.762");
+        assertEquals(Math.tanh(-1.0), result.getEntry(0, 2), tolerance, "tanh(-1) should be ~-0.762");
+        assertEquals(Math.tanh(2.0), result.getEntry(1, 0), tolerance, "tanh(2) should be ~0.964");
+        assertEquals(Math.tanh(-2.0), result.getEntry(1, 1), tolerance, "tanh(-2) should be ~-0.964");
+        assertEquals(Math.tanh(0.5), result.getEntry(1, 2), tolerance, "tanh(0.5) should be ~0.462");
+        
+        // Verify all values are in [-1, 1] range
+        for (int i = 0; i < result.getRowDimension(); i++) {
+            for (int j = 0; j < result.getColumnDimension(); j++) {
+                double value = result.getEntry(i, j);
+                assertTrue(value >= -1.0 && value <= 1.0, 
+                    String.format("Tanh output[%d][%d] = %f should be in [-1,1] range", i, j, value));
+            }
+        }
+    }
+
+    @Test
+    void testTanhWithNeuralNetwork() {
+        // Test tanh as both hidden and output activation functions
+        mlp.activationHiddenInput.setValue(new ArrayList<>(List.of(new Tanh())), mlp);
+        mlp.activationOutputInput.setValue(new Tanh(), mlp);
+        mlp.initAndValidate();
+        
+        double output = mlp.getArrayValue(0);
+        assertFalse(Double.isNaN(output), "Neural network output with Tanh should not be NaN");
+        assertTrue(output >= -1.0 && output <= 1.0, 
+            "Neural network output with Tanh should be in [-1,1] range, got: " + output);
     }
 
     private ArrayList<RealParameter> mockPredictors() {
