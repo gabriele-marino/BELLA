@@ -30,6 +30,12 @@ public class Sigmoid extends ActivationFunction {
     private RealParameter s; //shape (steepness)
     private RealParameter mid; // midpoint: the value of z at which the output is halfway between lower and upper
 
+    /**
+     * No-argument constructor that initializes with default values and calls initAndValidate().
+     */
+    public Sigmoid() {
+        initAndValidate();
+    }
 
     @Override
     public void initAndValidate() {

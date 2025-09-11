@@ -15,24 +15,26 @@ import java.util.List;
 public class BayesMLP extends CalculationNode implements Function {
 
     public Input<ArrayList<RealParameter>> predictorsInput = new Input<>("predictor", "Predictors", new ArrayList<>(), Input.Validate.REQUIRED);
-    public Input<ArrayList<RealParameter>> weightsInput = new Input<>("weights", "Weights", new ArrayList<>(), Input.Validate.REQUIRED);
+    public Input<RealParameter> weightsInput = new Input<>("weights", "Flattened weights vector containing all layer weights sequentially", Input.Validate.REQUIRED);
     public Input<Boolean> useBiasInAllInput = new Input<>("useBiasInAll", "Bias for all layers?", true, Input.Validate.OPTIONAL);
-    public Input<List<Integer>> nodesInput = new Input<>("nodes", "Layer nodes", new ArrayList<>(), Input.Validate.REQUIRED);
+    public Input<List<Integer>> nodesInput = new Input<>("nodes", "Hidden layer nodes", new ArrayList<>(), Input.Validate.REQUIRED);
+    public Input<Integer> outputNodes = new Input<>("outNodes", "Output layer nodes", 1, Input.Validate.OPTIONAL);
     public Input<ArrayList<ActivationFunction>> activationHiddenInput = new Input<>("activationFunctionsHidden",
             "Activation functions for hidden layers. Can only be empty if there are no hidden layers." +
                     "If exactly one is supplied, all hidden layers use this function." +
                     "If the list size is larger, one activation function per layer must be supplied (they may be the same)." +
-                    "Default: sigmoid for all hidden layers", new ArrayList<>(),
+                    "Default: relu for all hidden layers", new ArrayList<>(),
             Input.Validate.OPTIONAL);
 
     public Input<ActivationFunction> activationOutputInput = new Input<>("activationFunctionsOutput",
             "Activation functions for the output layer." +
-                    "Default: sigmoid.", new Sigmoid(), Input.Validate.REQUIRED);
+                    "Default: relu.", new ReLu(), Input.Validate.REQUIRED);
 
 
     RealMatrix predictors;
     int nonOutputBiasTerm = 1;
-    ArrayList<RealParameter> weights;
+    RealParameter weights;
+    int[] layerWeightOffsets; // Starting index for each layer's weights in the flattened vector
     int parameterSize;
     int nPredictor;
     int nHiddenLayers;
@@ -41,7 +43,7 @@ public class BayesMLP extends CalculationNode implements Function {
     boolean needsRecalculation = true;
     int[][] shapes;
     ArrayList<ActivationFunction> activationFunctionsHidden;
-    ActivationFunction DEFAULT_ACTIVATION_FUNCTION_HIDDEN = new Sigmoid();
+    ActivationFunction DEFAULT_ACTIVATION_FUNCTION_HIDDEN = new ReLu();
     ActivationFunction activationFunctionOutput;
 
     @Override
@@ -59,15 +61,21 @@ public class BayesMLP extends CalculationNode implements Function {
         }
 
         List<Integer> nodes = nodesInput.get();
+        nodes.add(outputNodes.get());
         weights = weightsInput.get();
-        if (nodes.size() == 0)
+        if (nodes.isEmpty())
             throw new IllegalArgumentException("Nodes must include at least output layer.");
-        if (nodes.size() != weights.size())
-            throw new IllegalArgumentException("Weights and nodes dimension mismatch.");
+        for (int i = 0; i < nodes.size(); i++) {
+            if (nodes.get(i)<=0)
+                throw new IllegalArgumentException("Layer "+i+" has non positive number of nodes: "+nodes.get(i)+".");
+        }
+
         nHiddenLayers = nodes.size() - 1;
+        // Calculate total weights needed and layer offsets
+        calculateWeightDimensionsAndOffsets(nodes);
 
         activationFunctionsHidden = activationHiddenInput.get();
-        if (activationFunctionsHidden.size() == 0) {
+        if (activationFunctionsHidden.isEmpty()) {
             Log.warning("No hidden layer activation function provided. Using " +
                     DEFAULT_ACTIVATION_FUNCTION_HIDDEN.toString() + ".");
             activationFunctionsHidden.add(DEFAULT_ACTIVATION_FUNCTION_HIDDEN);
@@ -91,31 +99,64 @@ public class BayesMLP extends CalculationNode implements Function {
         activationFunctionOutput = activationOutputInput.get(); // required so can't be null, no check needed
         Log.info.println("Output layer activation function: " + activationFunctionOutput.toString() + ".");
 
+        for (RealParameter pred : predictorsInput.get()) {
+            normalizeRealParameter(pred);
+        }
+
         predictors = MatrixUtils.createRealMatrix(convertToDoubleArray(predictorsInput.get())).transpose();
 
 
-        if (nHiddenLayers == 0) {
-            weights.get(0).setDimension(nPredictor + 1);
-        } else {
-            for (int i = 0; i < nHiddenLayers; i++) {
-                int inputDim = (i == 0 ? nPredictor : nodes.get(i - 1)) + nonOutputBiasTerm;
-                weights.get(i).setDimension(inputDim * nodes.get(i));
-            }
-            weights.get(nHiddenLayers).setDimension(nodes.get(nHiddenLayers - 1) + 1);
-        }
+        // Dimension is set by calculateWeightDimensionsAndOffsets()
         initializeMatrices();
+    }
+
+    private void calculateWeightDimensionsAndOffsets(List<Integer> nodes) {
+        layerWeightOffsets = new int[nHiddenLayers + 2]; // +1 for total size at end
+        int totalWeights = 0;
+        
+        for (int i = 0; i <= nHiddenLayers; i++) {
+            layerWeightOffsets[i] = totalWeights;
+            int inputDim, outputDim;
+            
+            if (nHiddenLayers == 0) {
+                // Only output layer
+                inputDim = nPredictor + 1;
+                outputDim = nodes.get(0);
+            } else if (i == 0) {
+                // First hidden layer
+                inputDim = nPredictor + nonOutputBiasTerm;
+                outputDim = nodes.get(0);
+            } else if (i == nHiddenLayers) {
+                // Output layer
+                inputDim = nodes.get(i - 1) + 1;
+                outputDim = 1;
+            } else {
+                // Hidden layers
+                inputDim = nodes.get(i - 1) + nonOutputBiasTerm;
+                outputDim = nodes.get(i);
+            }
+            
+            totalWeights += inputDim * outputDim;
+        }
+        
+        layerWeightOffsets[nHiddenLayers + 1] = totalWeights; // Store total size
+        weights.setDimension(totalWeights);
     }
 
     private void initializeMatrices() {
         weightMatrices = new RealMatrix[nHiddenLayers + 1];
         shapes = new int[nHiddenLayers + 1][2];
+        double[] allWeights = weights.getDoubleValues();
+        
         for (int i = 0; i <= nHiddenLayers; i++) {
             shapes[i] = getLayerShape(i);
             weightMatrices[i] = MatrixUtils.createRealMatrix(shapes[i][0], shapes[i][1]);
-            double[] vals = weights.get(i).getDoubleValues();
+            
+            int offset = layerWeightOffsets[i];
             for (int r = 0, k = 0; r < shapes[i][0]; r++) {
                 for (int c = 0; c < shapes[i][1]; c++) {
-                    weightMatrices[i].setEntry(r, c, vals[k++]);
+                    weightMatrices[i].setEntry(r, c, allWeights[offset + k]);
+                    k++;
                 }
             }
         }
@@ -145,14 +186,16 @@ public class BayesMLP extends CalculationNode implements Function {
 
     private void checkAndUpdateWeights() {
         boolean updated = false;
-        for (int i = 0; i < weights.size(); i++) {
-            double[] w = weights.get(i).getDoubleValues();
+        double[] allWeights = weights.getDoubleValues();
+        
+        for (int i = 0; i <= nHiddenLayers; i++) {
+            int offset = layerWeightOffsets[i];
             int k = 0;
             for (int r = 0; r < weightMatrices[i].getRowDimension(); r++) {
                 for (int c = 0; c < weightMatrices[i].getColumnDimension(); c++) {
-                    if (weightMatrices[i].getEntry(r, c) != w[k]) {
+                    if (weightMatrices[i].getEntry(r, c) != allWeights[offset + k]) {
                         updated = true;
-                        weightMatrices[i].setEntry(r, c, w[k]);
+                        weightMatrices[i].setEntry(r, c, allWeights[offset + k]);
                     }
                     k++;
                 }
@@ -200,5 +243,49 @@ public class BayesMLP extends CalculationNode implements Function {
             }
         }
         return result;
+    }
+    
+    // Public getter for testing purposes
+    public RealMatrix getPredictors() {
+        return predictors;
+    }
+    
+    /**
+     * Normalizes a RealParameter to the range [0,1] using min-max normalization.
+     * Formula: normalized = (value - min) / (max - min)
+     * 
+     * @param parameter The RealParameter to normalize
+     * @return A new RealParameter with values normalized to [0,1]
+     */
+    public static void normalizeRealParameter(RealParameter parameter) {
+        double[] values = parameter.getDoubleValues();
+        
+        // Find min and max
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        for (double value : values) {
+            if (value < min) min = value;
+            if (value > max) max = value;
+        }
+        
+        // Create normalized values
+        double[] normalized = new double[values.length];
+        double range = max - min;
+        
+        if (range > 0) {
+            // Normal case: normalize to [0,1]
+            for (int i = 0; i < values.length; i++) {
+                normalized[i] = (values[i] - min) / range;
+            }
+        } else {
+            // Edge case: all values are the same, set to 0.5
+            for (int i = 0; i < values.length; i++) {
+                normalized[i] = 0.5;
+            }
+        }
+
+        for (int i = 0; i < normalized.length; i++) {
+            parameter.setValue(i, normalized[i]);
+        }
     }
 } 
