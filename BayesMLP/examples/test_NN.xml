@@ -53,8 +53,7 @@
                         <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
                                       changeTimes="@changeTimes"
                                       timesAreAges="false" processLength="@origin">
-<!--                            nodes="$(nNodes=2)"-->
-                            <skylineValues id="samplingRate" spec="bella.BayesMLP"  useBiasInAll="true">
+                            <skylineValues id="samplingRate" spec="bella.BayesMLP" nodes="$(nNodes=2)"  useBiasInAll="true">
                                 <predictor spec="RealParameter" value="-1.73100852 4.99007016 7.41834617"/>
 <!--                                <predictor spec="RealParameter" value="1.5 4.5 6"/>-->
                                 <weights idref="w"/>
