@@ -3,16 +3,19 @@ package bella;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Log;
+import beast.base.core.Loggable;
 import beast.base.inference.CalculationNode;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.linear.*;
 import beast.base.core.Function;
 
+import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Description("Bayesian multi layer perceptron designed to be used within Beast2.")
-public class BayesMLP extends CalculationNode implements Function {
+public class BayesMLP extends CalculationNode implements Function, Loggable {
 
     public Input<ArrayList<RealParameter>> predictorsInput = new Input<>("predictor", "Predictors", new ArrayList<>(), Input.Validate.REQUIRED);
     public Input<RealParameter> weightsInput = new Input<>("weights", "Flattened weights vector containing all layer weights sequentially", Input.Validate.REQUIRED);
@@ -287,5 +290,68 @@ public class BayesMLP extends CalculationNode implements Function {
         for (int i = 0; i < normalized.length; i++) {
             parameter.setValue(i, normalized[i]);
         }
+    }
+
+    @Override
+    public void init(PrintStream out) {
+        // Generate headers for weight coefficients showing layer connections
+        // Format: w{fromLayer}.{fromNode}_{toLayer}.{toNode}
+        // For bias weights: b_{toLayer}.{toNode}
+        // Layer 0 is the input layer.
+        
+        List<Integer> nodes = nodesInput.get();
+        nodes.add(outputNodes.get());
+        
+        for (int layer = 0; layer <= nHiddenLayers; layer++) {
+            int[] shape = getLayerShape(layer);
+            int inputDim = shape[0];
+            int outputDim = shape[1];
+            
+            for (int fromNode = 0; fromNode < inputDim; fromNode++) {
+                for (int toNode = 0; toNode < outputDim; toNode++) {
+                    String header;
+                    if (layer == 0) {
+                        // Input layer to first hidden/output layer
+                        if (fromNode == 0 && useBiasInAllInput.get()) {
+                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
+                        } else {
+                            int predictorIdx = useBiasInAllInput.get() ? fromNode : fromNode + 1;
+                            header = String.format("w0.%d_%d.%d", predictorIdx, layer + 1, toNode + 1);
+                        }
+                    } else {
+                        // Hidden layer to hidden/output layer
+                        if (fromNode == inputDim - 1 && layer < nHiddenLayers) {
+                            // Bias term for hidden layers
+                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
+                        } else if (fromNode == inputDim - 1 && layer == nHiddenLayers) {
+                            // Bias term for output layer
+                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
+                        } else {
+                            header = String.format("w%d.%d_%d.%d", layer, fromNode + 1, layer + 1, toNode + 1);
+                        }
+                    }
+                    out.print(header + "\t");
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void log(long sample, PrintStream out) {
+        // Log current weight values in the same order as headers
+        checkAndUpdateWeights(); // Ensure weights are up to date
+        
+        for (int layer = 0; layer <= nHiddenLayers; layer++) {
+            RealMatrix layerWeights = weightMatrices[layer];
+            for (int fromNode = 0; fromNode < layerWeights.getRowDimension(); fromNode++) {
+                for (int toNode = 0; toNode < layerWeights.getColumnDimension(); toNode++) {
+                    out.print(layerWeights.getEntry(fromNode, toNode) + "\t");
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void close(PrintStream out) {
     }
 } 

@@ -94,8 +94,14 @@
             <log idref="origin"/>
 
             <!-- GLM parameters -->
-            <log idref="w"/>
+            <!-- Choose one of the below loggers -->
+<!--            <log idref="w"/>-->
+            <log idref="samplingRate"/>
         </logger>
+
+<!--        <logger spec="Logger" logEvery="$(logEvery)" fileName="$(filebase)_weights_$(seed).log">-->
+<!--            <log idref="samplingRate"/>-->
+<!--        </logger>-->
 
         <logger id="screenlog" spec="Logger" logEvery="$(logEvery)">
             <log idref="posterior"/>
