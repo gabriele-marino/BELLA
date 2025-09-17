@@ -7,6 +7,7 @@
         <provider classname="bella.ReLu"/>
         <provider classname="bella.SoftPlus"/>
         <provider classname="bella.Sigmoid"/>
+        <provider classname="bella.SkylineNodeTreeLogger"/>
     </service>
 
 </addon>

@@ -23,7 +23,7 @@ public class BayesMLPTests {
         mlp.predictorsInput.setValue(mockPredictors(), mlp);
         mlp.nodesInput.setValue(List.of(3, 1), mlp); // 1 hidden layer (3 nodes) + 1 output
         mlp.weightsInput.setValue(mockWeights(), mlp);
-        mlp.activationHiddenInput.setValue(new ArrayList<>(List.of(new ReLu())), mlp);
+        mlp.activationHiddenInput.setValue(new ReLu(), mlp);
     }
 
     @ParameterizedTest
@@ -76,8 +76,7 @@ public class BayesMLPTests {
         RealParameter highWeights = makeParam(new Double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0});
         mlp.weightsInput.setValue(highWeights, mlp);
 
-        mlp.activationHiddenInput.get().clear();
-        mlp.activationHiddenInput.setValue(new ArrayList<>(List.of(new ReLu())), mlp);
+        mlp.activationHiddenInput.setValue(new ReLu(), mlp);
         Sigmoid sig = new Sigmoid();
         sig.lowerInput.setValue(-1.0, sig);
         sig.upperInput.setValue(2.0, sig);
@@ -95,8 +94,7 @@ public class BayesMLPTests {
         RealParameter highWeights = makeParam(new Double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0});
         mlp.weightsInput.setValue(highWeights, mlp);
 
-        mlp.activationHiddenInput.get().clear();
-        mlp.activationHiddenInput.setValue(new ArrayList<>(List.of(new ReLu())), mlp);
+        mlp.activationHiddenInput.setValue(new ReLu(), mlp);
         mlp.activationOutputInput.setValue(new SoftPlus(), mlp);
         mlp.useBiasInAllInput.setValue(true, mlp);
         mlp.initAndValidate();
@@ -191,7 +189,7 @@ public class BayesMLPTests {
     @Test
     void testTanhWithNeuralNetwork() {
         // Test tanh as both hidden and output activation functions
-        mlp.activationHiddenInput.setValue(new ArrayList<>(List.of(new Tanh())), mlp);
+        mlp.activationHiddenInput.setValue(new Tanh(), mlp);
         mlp.activationOutputInput.setValue(new Tanh(), mlp);
         mlp.initAndValidate();
         

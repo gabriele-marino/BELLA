@@ -19,19 +19,16 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
 
     public Input<ArrayList<RealParameter>> predictorsInput = new Input<>("predictor", "Predictors", new ArrayList<>(), Input.Validate.REQUIRED);
     public Input<RealParameter> weightsInput = new Input<>("weights", "Flattened weights vector containing all layer weights sequentially", Input.Validate.REQUIRED);
-    public Input<Boolean> useBiasInAllInput = new Input<>("useBiasInAll", "Bias for all layers?", true, Input.Validate.OPTIONAL);
     public Input<List<Integer>> nodesInput = new Input<>("nodes", "Hidden layer nodes", new ArrayList<>(), Input.Validate.OPTIONAL);
     public Input<Integer> outputNodes = new Input<>("outNodes", "Output layer nodes", 1, Input.Validate.OPTIONAL);
-    public Input<ArrayList<ActivationFunction>> activationHiddenInput = new Input<>("activationFunctionsHidden",
-            "Activation functions for hidden layers. Can only be empty if there are no hidden layers." +
-                    "If exactly one is supplied, all hidden layers use this function." +
-                    "If the list size is larger, one activation function per layer must be supplied (they may be the same)." +
-                    "Default: relu for all hidden layers.", new ArrayList<>(),
+    public Input<ActivationFunction> activationHiddenInput = new Input<>("activationFunctionHidden",
+            "Activation function for the hidden layers." +
+                    "Default: relu.", new ReLu(),
             Input.Validate.OPTIONAL);
 
     public Input<ActivationFunction> activationOutputInput = new Input<>("activationFunctionsOutput",
             "Activation functions for the output layer." +
-                    "Default: relu.", new ReLu(), Input.Validate.REQUIRED);
+                    "Default: sigmoid.", new Sigmoid(), Input.Validate.OPTIONAL);
 
 
     RealMatrix predictors;
@@ -45,17 +42,13 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
     RealMatrix output;
     boolean needsRecalculation = true;
     int[][] shapes;
-    ArrayList<ActivationFunction> activationFunctionsHidden;
-    ActivationFunction DEFAULT_ACTIVATION_FUNCTION_HIDDEN = new ReLu();
+    ActivationFunction activationFunctionHidden;
     ActivationFunction activationFunctionOutput;
 
     @Override
     public void initAndValidate() {
         nPredictor = predictorsInput.get().size();
         parameterSize = predictorsInput.get().get(0).getDimension();
-
-        if (!useBiasInAllInput.get())
-            nonOutputBiasTerm = 0;
 
         for (RealParameter pred : predictorsInput.get()) {
             if (parameterSize != pred.getDimension()) {
@@ -77,27 +70,9 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
         // Calculate total weights needed and layer offsets
         calculateWeightDimensionsAndOffsets(nodes);
 
-        activationFunctionsHidden = activationHiddenInput.get();
-        if (activationFunctionsHidden.isEmpty()) {
-            Log.warning("No hidden layer activation function provided. Using " +
-                    DEFAULT_ACTIVATION_FUNCTION_HIDDEN.toString() + ".");
-            activationFunctionsHidden.add(DEFAULT_ACTIVATION_FUNCTION_HIDDEN);
-        }
-        if (activationFunctionsHidden.size() == 1 && nHiddenLayers > 1) {
-            Log.info.println("All hidden layers use activation function: " +
-                    activationFunctionsHidden.get(0).toString() + ".");
-            for (int i = 1; i < nHiddenLayers; i++) {
-                activationFunctionsHidden.add(activationFunctionsHidden.get(0));
-            }
-        } else {
-            if (activationFunctionsHidden.size() > 1 && activationFunctionsHidden.size() != nHiddenLayers)
-                throw new IllegalArgumentException("Number of activation functions for hidden layers" +
-                        " is larger than one but not equal to number of hidden layers.");
 
-            for (int i = 0; i < nHiddenLayers; i++)
-                Log.info("Activation function for hidden layer " + i + ": " +
-                        activationFunctionsHidden.get(i).toString() + ".");
-        }
+        activationFunctionHidden = activationHiddenInput.get();
+        Log.info.println("Hidden layer(s) activation function: " + activationFunctionHidden.toString() + ".");
 
         activationFunctionOutput = activationOutputInput.get(); // required so can't be null, no check needed
         Log.info.println("Output layer activation function: " + activationFunctionOutput.toString() + ".");
@@ -215,7 +190,7 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
 
         RealMatrix layerOut = predictors;
         for (int l = 0; l < nHiddenLayers; l++) {
-            layerOut = runLayer(layerOut, weightMatrices[l], activationFunctionsHidden.get(l));
+            layerOut = runLayer(layerOut, weightMatrices[l], activationFunctionHidden);
         }
         output = runLayer(layerOut, weightMatrices[nHiddenLayers], activationFunctionOutput);
     }
@@ -294,42 +269,20 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
 
     @Override
     public void init(PrintStream out) {
-        // Generate headers for weight coefficients showing layer connections
-        // Format: w{fromLayer}.{fromNode}_{toLayer}.{toNode}
-        // For bias weights: b_{toLayer}.{toNode}
-        // Layer 0 is the input layer.
-        
-        List<Integer> nodes = nodesInput.get();
-        nodes.add(outputNodes.get());
+        // Generate headers for weight coefficients
+        // Format: W.LayerX[i][j] where X is layer number, i is input neuron index (including bias), j is output neuron index
+        // Bias term is always present as the first weight (index 0) for each layer
         
         for (int layer = 0; layer <= nHiddenLayers; layer++) {
             int[] shape = getLayerShape(layer);
-            int inputDim = shape[0];
+            int inputDim = shape[0];   // includes bias term (+1)
             int outputDim = shape[1];
             
-            for (int fromNode = 0; fromNode < inputDim; fromNode++) {
-                for (int toNode = 0; toNode < outputDim; toNode++) {
-                    String header;
-                    if (layer == 0) {
-                        // Input layer to first hidden/output layer
-                        if (fromNode == 0 && useBiasInAllInput.get()) {
-                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
-                        } else {
-                            int predictorIdx = useBiasInAllInput.get() ? fromNode : fromNode + 1;
-                            header = String.format("w0.%d_%d.%d", predictorIdx, layer + 1, toNode + 1);
-                        }
-                    } else {
-                        // Hidden layer to hidden/output layer
-                        if (fromNode == inputDim - 1 && layer < nHiddenLayers) {
-                            // Bias term for hidden layers
-                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
-                        } else if (fromNode == inputDim - 1 && layer == nHiddenLayers) {
-                            // Bias term for output layer
-                            header = String.format("bias_%d.%d", layer + 1, toNode + 1);
-                        } else {
-                            header = String.format("w%d.%d_%d.%d", layer, fromNode + 1, layer + 1, toNode + 1);
-                        }
-                    }
+            for (int i = 0; i < inputDim; i++) {
+                for (int j = 0; j < outputDim; j++) {
+                    String header = String.format("%sW.Layer%d[%d][%d]", 
+                        this.getID() != null ? this.getID() : "",
+                        layer + 1, i, j);
                     out.print(header + "\t");
                 }
             }
