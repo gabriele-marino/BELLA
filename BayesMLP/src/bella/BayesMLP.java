@@ -14,6 +14,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ETH Zurich ugne.stolz@protonmail.com
+ */
+
 @Description("Bayesian multi layer perceptron designed to be used within Beast2.")
 public class BayesMLP extends CalculationNode implements Function, Loggable {
 

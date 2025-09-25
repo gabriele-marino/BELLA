@@ -52,7 +52,6 @@ public class BayesMLPTests {
 
     @Test
     void testBiasEnabled() {
-        mlp.useBiasInAllInput.setValue(true, mlp);
         mlp.activationOutputInput.setValue(new SoftPlus(), mlp);
         mlp.initAndValidate();
         double val = mlp.getArrayValue(0);
@@ -62,7 +61,6 @@ public class BayesMLPTests {
 
     @Test
     void testBiasDisabled() {
-        mlp.useBiasInAllInput.setValue(false, mlp);
         mlp.activationOutputInput.setValue(new SoftPlus(), mlp);
         mlp.initAndValidate();
         double val = mlp.getArrayValue(0);
@@ -82,7 +80,6 @@ public class BayesMLPTests {
         sig.upperInput.setValue(2.0, sig);
         sig.initAndValidate();
         mlp.activationOutputInput.setValue(sig, mlp);
-        mlp.useBiasInAllInput.setValue(true, mlp);
         mlp.initAndValidate();
         double sigmoidVal = mlp.getArrayValue(0);
         assertTrue(sigmoidVal <= 2.0, "Sigmoid output must be bounded by 2.0");
@@ -96,7 +93,6 @@ public class BayesMLPTests {
 
         mlp.activationHiddenInput.setValue(new ReLu(), mlp);
         mlp.activationOutputInput.setValue(new SoftPlus(), mlp);
-        mlp.useBiasInAllInput.setValue(true, mlp);
         mlp.initAndValidate();
         double softplusVal = mlp.getArrayValue(0);
 
@@ -108,7 +104,6 @@ public class BayesMLPTests {
         // Wrong number of weights (should be 13 for 2 predictors, 3 hidden nodes, 1 output)
         RealParameter badWeights = makeParam(new Double[]{1.0, 1.0, 1.0, 1.0, 1.0}); // incorrect shape - only 5 weights
         mlp.weightsInput.setValue(badWeights, mlp);
-        mlp.useBiasInAllInput.setValue(true, mlp);
         mlp.activationOutputInput.setValue(new SoftPlus(), mlp);
         // This should not throw - the weights vector will just be resized
         // But we can still test it doesn't crash

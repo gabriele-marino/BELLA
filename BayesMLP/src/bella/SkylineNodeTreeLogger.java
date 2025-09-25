@@ -1,6 +1,7 @@
 package bella;
 
 import bdmmprime.mapping.TypedNodeTreeLogger;
+import beast.base.core.Description;
 import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.evolution.tree.Node;
@@ -20,6 +21,7 @@ import java.util.List;
  *
  * @author ETH Zurich ugne.stolz@protonmail.com
  */
+@Description("Logs typed node tree and one or more skyline vector parameters per node/time/type")
 public class SkylineNodeTreeLogger extends TypedNodeTreeLogger {
 
     public Input<List<SkylineVectorParameter>> skylineParametersInput = new Input<>(
