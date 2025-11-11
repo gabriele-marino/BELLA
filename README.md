@@ -1,5 +1,22 @@
 # BELLA
 
+Installing via BEAUti
+--------------------
+
+BELLA requires a working installation of BEAST 2.7 which can be obtained from https://www.beast2.org/. 
+The package itself can then be installed via the built-in package manager in the following way:
+
+1. Open BEAUti.
+2. From the `File` menu select `Manage Packages`.
+3. Click the `Package repositories` button at the bottom of the dialog box.
+4. Click `Add URL` and enter the following repository URL:
+   [tps://github.com/gabriele-marino/BELLA/package.xml)](tps://github.com/gabriele-marino/BELLA/package.xml).
+
+Installing from Source
+--------------------
+
+You may also install BELLA manually. Follow instructions at [https://www.beast2.org/managing-packages](https://www.beast2.org/managing-packages/#:~:text=If%20for%20some%20reason%20you,zip%20inside%20the%20VSS%20directory) and use the `.zip` file from your preferred [release](https://github.com/gabriele-marino/BELLA/releases). 
+
 Building from Source
 --------------------
 
