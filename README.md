@@ -1,5 +1,14 @@
 # BELLA
 
+BEAST2 package dependencies
+--------------------
+
+BELLA strictly depends on the following BEAST2 packages (install them before installing BELLA):
+  - [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
+
+For most functions and to run our example files, we require additional packages:
+  - [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
+
 Installing via BEAUti
 --------------------
 
@@ -40,13 +49,3 @@ in the directory `../beast2` and the latest
 in the directory `../beastfx` relative to the BELLA root, the build
 script will attempt to download them automatically.  Thus, most builds
 will require a network connection.
-
-
-BEAST2 package dependencies
---------------------
-
-BELLA strictly depends on the following BEAST2 packages:
-  - [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
-
-For most functions and to run our example files, we require additional packages:
-  - [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
