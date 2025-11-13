@@ -2,7 +2,7 @@
 
 **BELLA: Bayesian Evolutionary Layered Learning Architectures**
 
-BELLA is a BEAST2 package that implements a Bayesian multi-layer perceptron (neural network) designed for phylodynamic inference. The package userelies on neural networks as flexible functions within BEAST2 analyses, particularly useful for modeling time-varying parameters, informed by external data (features).
+BELLA is a BEAST2 package that implements a Bayesian multi-layer perceptron (neural network) designed for phylodynamic inference. The package relies on neural networks as flexible functions within BEAST2 analyses, particularly useful for modeling time-varying parameters, informed by external data (features).
 
 ## Overview
 
