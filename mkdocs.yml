@@ -2,3 +2,9 @@ site_name: BELLA
 site_url: https://gabriele-marino.github.io/BELLA/
 theme:
   name: readthedocs
+nav:
+  - Introduction: index.md
+  - Installation: installation.md
+  - Model Components: components.md
+  - Setting Up Analyses: usage.md
+  - Citation and License: cite.md
