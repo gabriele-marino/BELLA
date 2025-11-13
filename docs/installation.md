@@ -3,10 +3,10 @@
 ## BEAST2 package dependencies
 
 BELLA strictly depends on the following BEAST2 packages (install them before installing BELLA):
-  - [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
+    * [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
 
 For most functions and to run our example files, we require additional packages:
-  - [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
+    * [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
 
 ## Via BEAUti
 
@@ -26,9 +26,10 @@ You may also install BELLA manually. Follow instructions at [https://www.beast2.
 ## Building from Source Code
 
 To build BELLA from source you'll need the following to be installed:
-- OpenJDK version 17 or greater
-- A recent version of OpenJFX
-- the Apache Ant build system
+
+* OpenJDK version 17 or greater
+* A recent version of OpenJFX
+* the Apache Ant build system
 
 Once these are installed and in your execution path, issue the following
 command from the root directory of this repository:
