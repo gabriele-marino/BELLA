@@ -4,23 +4,23 @@
 The main neural network class that implements a multi-layer perceptron.
 
 **Inputs:**
-- `predictor` (required): One or more RealParameter objects containing predictor variables
-- `weights` (required): RealParameter objects for each layer's weights
-- `nodes` (optional): List of integers specifying hidden layer sizes
-- `outNodes` (optional): Number of output nodes (default: 1)
-- `activationFunctionHidden` (optional): Activation function for hidden layers (default: ReLU)
-- `activationFunctionsOutput` (optional): Activation function for output layer (default: Sigmoid)
+* `predictor` (required): One or more RealParameter objects containing predictor variables
+* `weights` (required): RealParameter objects for each layer's weights
+* `nodes` (optional): List of integers specifying hidden layer sizes
+* `outNodes` (optional): Number of output nodes (default: 1)
+* `activationFunctionHidden` (optional): Activation function for hidden layers (default: ReLU)
+* `activationFunctionsOutput` (optional): Activation function for output layer (default: Sigmoid)
 
 **Architecture:**
 
 The neural network automatically determines its structure based on:
-- Number of predictors (input dimension)
-- Hidden layer configuration (`nodes` parameter)
-- Output dimension (`outNodes` parameter)
+* Number of predictors (input dimension)
+* Hidden layer configuration (`nodes` parameter)
+* Output dimension (`outNodes` parameter)
 
 Each layer includes a bias term. The weight dimensions are calculated as:
-- **Hidden layer i**: `(n_inputs[i] + 1) × n_nodes[i]`
-- **Output layer**: `(n_hidden_last + 1) × n_outputs`
+* **Hidden layer i**: `(n_inputs[i] + 1) × n_nodes[i]`
+* **Output layer**: `(n_hidden_last + 1) × n_outputs`
 
 **Predictor Normalization**
 
@@ -36,8 +36,8 @@ If all values are identical, they are set to 0.5.
 
 Weights are stored as flattened vectors but organized as matrices internally:
 
-- **Row index**: Input node (including bias term at index 0)
-- **Column index**: Output node
+* **Row index**: Input node (including bias term at index 0)
+* **Column index**: Output node
 
 For a layer with 3 inputs and 2 outputs (plus bias):
 ```
@@ -78,10 +78,10 @@ f(x) = max(0, x)
 ```
 
 **Properties:**
-- Non-linear
-- Output range: [0, ∞)
-- Commonly used in hidden layers
-- Helps avoid vanishing gradient problem
+* Non-linear
+* Output range: [0, ∞)
+* Commonly used in hidden layers
+* Helps avoid vanishing gradient problem
 
 ### Sigmoid
 ```
@@ -89,10 +89,10 @@ f(x) = lower + (upper - lower) / (1 + exp(-shape * (x - midpoint)))
 ```
 
 **Inputs:**
-- `lower` (optional): Lower bound (default: 0.0)
-- `upper` (optional): Upper bound (default: 1.0)
-- `shape` (optional): Steepness parameter (default: 1.0)
-- `midpoint` (optional): Inflection point (default: 0.0)
+* `lower` (optional): Lower bound (default: 0.0)
+* `upper` (optional): Upper bound (default: 1.0)
+* `shape` (optional): Steepness parameter (default: 1.0)
+* `midpoint` (optional): Inflection point (default: 0.0)
 
 **Usage:**
 ```xml
@@ -103,10 +103,10 @@ f(x) = lower + (upper - lower) / (1 + exp(-shape * (x - midpoint)))
 ```
 
 **Properties:**
-- S-shaped curve
-- Output range: [lower, upper]
-- Smooth, differentiable
-- Useful for output layers when values need to be bounded
+* S-shaped curve
+* Output range: [lower, upper]
+* Smooth, differentiable
+* Useful for output layers when values need to be bounded
 
 ### SoftPlus
 ```
@@ -119,10 +119,10 @@ f(x) = log(1 + exp(x))
 ```
 
 **Properties:**
-- Smooth approximation of ReLU
-- Output range: (0, ∞)
-- Always positive
-- Differentiable everywhere
+* Smooth approximation of ReLU
+* Output range: (0, ∞)
+* Always positive
+* Differentiable everywhere
 
 ### Tanh (Hyperbolic Tangent)
 ```
@@ -135,21 +135,21 @@ f(x) = tanh(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x))
 ```
 
 **Properties:**
-- S-shaped curve
-- Output range: (-1, 1)
-- Zero-centered
-- Often used in hidden layers
+* S-shaped curve
+* Output range: (-1, 1)
+* Zero-centered
+* Often used in hidden layers
 
 ## 3. SkylineNodeTreeLogger
 
 Enhanced tree logger that combines typed node information with skyline parameter values.
 
 **Inputs:**
-- All inputs from `TypedNodeTreeLogger` (from BDMM-Prime)
-- `skylineParameter`: One or more SkylineVectorParameter objects to log
-- `parameterization`: Parameterization object for time conversion
-- `finalSampleOffset` (optional): Time offset for final sample (default: 0.0)
-- `precision` (optional): Decimal places for logging (default: 6)
+* All inputs from `TypedNodeTreeLogger` (from BDMM-Prime)
+* `skylineParameter`: One or more SkylineVectorParameter objects to log
+* `parameterization`: Parameterization object for time conversion
+* `finalSampleOffset` (optional): Time offset for final sample (default: 0.0)
+* `precision` (optional): Decimal places for logging (default: 6)
 
 **Usage:**
 ```xml
