@@ -3,9 +3,11 @@
 ## BEAST2 package dependencies
 
 BELLA strictly depends on the following BEAST2 packages (install them before installing BELLA):
+
 * [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
 
 For most functions and to run our example files, we require additional packages:
+
 * [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
 
 ## Via BEAUti
