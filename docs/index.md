@@ -4,6 +4,8 @@
 
 BELLA is a BEAST2 package that implements a Bayesian multi-layer perceptron (neural network) designed for phylodynamic inference. The package relies on neural networks as flexible functions within BEAST2 analyses, particularly useful for modeling time-varying parameters, informed by external data (features).
 
+This manual is dedicated to the usage of BELLA. If you interested in the source code, visit [https://github.com/gabriele-marino/BELLA](https://github.com/gabriele-marino/BELLA).
+
 ## Overview
 
 BELLA provides a framework for incorporating neural networks into BEAST2 models. The primary use case is modeling complex, non-linear relationships between predictors and model parameters (e.g., sampling, transmission or diversification rates) in birth-death models.
