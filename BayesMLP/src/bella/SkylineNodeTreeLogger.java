@@ -1,11 +1,11 @@
 package bella;
 
-import bdmmprime.mapping.TypedNodeTreeLogger;
 import beast.base.core.Description;
 import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
+import bdmmprime.mapping.TypedNodeTreeLogger;
 import bdmmprime.parameterization.Parameterization;
 import bdmmprime.parameterization.SkylineVectorParameter;
 import beast.base.inference.parameter.RealParameter;
