@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://gabriele-marino.github.io/BELLA/components/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Model Components - BELLA</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Model Components";
+        var mkdocs_page_input_path = "components.md";
+        var mkdocs_page_url = "/BELLA/components/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> BELLA
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Introduction</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Model Components</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Setting Up Analyses</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../cite/">Citation and License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">BELLA</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Model Components</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="1-bayesmlp">1. BayesMLP</h2>
+<p>The main neural network class that implements a multi-layer perceptron.</p>
+<p><strong>Inputs:</strong>
+* <code>predictor</code> (required): One or more RealParameter objects containing predictor variables
+* <code>weights</code> (required): RealParameter objects for each layer's weights
+* <code>nodes</code> (optional): List of integers specifying hidden layer sizes
+* <code>outNodes</code> (optional): Number of output nodes (default: 1)
+* <code>activationFunctionHidden</code> (optional): Activation function for hidden layers (default: ReLU)
+* <code>activationFunctionsOutput</code> (optional): Activation function for output layer (default: Sigmoid)</p>
+<p><strong>Architecture:</strong></p>
+<p>The neural network automatically determines its structure based on:
+* Number of predictors (input dimension)
+* Hidden layer configuration (<code>nodes</code> parameter)
+* Output dimension (<code>outNodes</code> parameter)</p>
+<p>Each layer includes a bias term. The weight dimensions are calculated as:
+* <strong>Hidden layer i</strong>: <code>(n_inputs[i] + 1) × n_nodes[i]</code>
+* <strong>Output layer</strong>: <code>(n_hidden_last + 1) × n_outputs</code></p>
+<p><strong>Predictor Normalization</strong></p>
+<p>All predictors are automatically normalized to [0,1] using min-max normalization:</p>
+<pre><code>normalized = (value - min) / (max - min)
+</code></pre>
+<p>If all values are identical, they are set to 0.5.</p>
+<p><strong>Weight Matrix Structure</strong></p>
+<p>Weights are stored as flattened vectors but organized as matrices internally:</p>
+<ul>
+<li><strong>Row index</strong>: Input node (including bias term at index 0)</li>
+<li><strong>Column index</strong>: Output node</li>
+</ul>
+<p>For a layer with 3 inputs and 2 outputs (plus bias):</p>
+<pre><code>Weight matrix shape: (4, 2)
+Flattened weight vector length: 8
+
+Matrix layout:
+[bias→node0,  bias→node1,
+ in0→node0,   in0→node1,
+ in1→node0,   in1→node1,
+ in2→node0,   in2→node1]
+</code></pre>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;bella.BayesMLP id=&quot;samplingRate&quot; nodes=&quot;10 5&quot;&gt;
+    &lt;predictor spec=&quot;RealParameter&quot; value=&quot;1.0 2.0 3.0&quot;/&gt;
+    &lt;predictor spec=&quot;RealParameter&quot; value=&quot;0.5 1.5 2.5&quot;/&gt;
+    &lt;weights id=&quot;w1&quot; spec=&quot;RealParameter&quot; value=&quot;0.1&quot;
+             dimension=&quot;30&quot;/&gt;  &lt;!--Layer 1. Dimensio is set automatically to 30: (2+1)*10 --&gt;
+    &lt;weights id=&quot;w2&quot; spec=&quot;RealParameter&quot; value=&quot;0.1&quot;
+             dimension=&quot;55&quot;/&gt;  &lt;!-- Layer 2. Dimensio is set automatically to 55: (10+1)*5 --&gt;
+    &lt;weights id=&quot;w3&quot; spec=&quot;RealParameter&quot; value=&quot;0.1&quot;
+             dimension=&quot;6&quot;/&gt;   &lt;!-- Output. Dimensio is set automatically to 6: (5+1)*1 --&gt;
+    &lt;activationFunctionHidden spec=&quot;bella.activations.ReLu&quot;/&gt;
+    &lt;activationFunctionsOutput spec=&quot;bella.activations.Sigmoid&quot;/&gt;
+&lt;/bella.BayesMLP&gt;
+</code></pre>
+<h2 id="2-activation-functions">2. Activation Functions</h2>
+<h3 id="relu-rectified-linear-unit">ReLu (Rectified Linear Unit)</h3>
+<pre><code>f(x) = max(0, x)
+</code></pre>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;activationFunctionHidden spec=&quot;bella.activations.ReLu&quot;/&gt;
+</code></pre>
+<p><strong>Properties:</strong>
+* Non-linear
+* Output range: [0, ∞)
+* Commonly used in hidden layers
+* Helps avoid vanishing gradient problem</p>
+<h3 id="sigmoid">Sigmoid</h3>
+<pre><code>f(x) = lower + (upper - lower) / (1 + exp(-shape * (x - midpoint)))
+</code></pre>
+<p><strong>Inputs:</strong>
+* <code>lower</code> (optional): Lower bound (default: 0.0)
+* <code>upper</code> (optional): Upper bound (default: 1.0)
+* <code>shape</code> (optional): Steepness parameter (default: 1.0)
+* <code>midpoint</code> (optional): Inflection point (default: 0.0)</p>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;activationFunctionsOutput spec=&quot;bella.activations.Sigmoid&quot; lower=&quot;0.0&quot; upper=&quot;100.0&quot;&gt;
+    &lt;shape spec=&quot;RealParameter&quot; value=&quot;2.0&quot;/&gt;
+    &lt;midpoint spec=&quot;RealParameter&quot; value=&quot;0.5&quot;/&gt;
+&lt;/activationFunctionsOutput&gt;
+</code></pre>
+<p><strong>Properties:</strong>
+* S-shaped curve
+* Output range: [lower, upper]
+* Smooth, differentiable
+* Useful for output layers when values need to be bounded</p>
+<h3 id="softplus">SoftPlus</h3>
+<pre><code>f(x) = log(1 + exp(x))
+</code></pre>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;activationFunctionHidden spec=&quot;bella.activations.SoftPlus&quot;/&gt;
+</code></pre>
+<p><strong>Properties:</strong>
+* Smooth approximation of ReLU
+* Output range: (0, ∞)
+* Always positive
+* Differentiable everywhere</p>
+<h3 id="tanh-hyperbolic-tangent">Tanh (Hyperbolic Tangent)</h3>
+<pre><code>f(x) = tanh(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x))
+</code></pre>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;activationFunctionHidden spec=&quot;bella.activations.Tanh&quot;/&gt;
+</code></pre>
+<p><strong>Properties:</strong>
+* S-shaped curve
+* Output range: (-1, 1)
+* Zero-centered
+* Often used in hidden layers</p>
+<h2 id="3-bellaskylinenodetreelogger">3. bella.SkylineNodeTreeLogger</h2>
+<p>Enhanced tree logger that combines typed node information with skyline parameter values.</p>
+<p><strong>Inputs:</strong>
+* All inputs from <code>TypedNodeTreeLogger</code> (from BDMM-Prime)
+* <code>skylineParameter</code>: One or more SkylineVectorParameter objects to log
+* <code>parameterization</code>: Parameterization object for time conversion
+* <code>finalSampleOffset</code> (optional): Time offset for final sample (default: 0.0)
+* <code>precision</code> (optional): Decimal places for logging (default: 6)</p>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-xml">
+&lt;logger id=&quot;treelog&quot; spec=&quot;bella.SkylineNodeTreeLogger2&quot;
+        logEvery=&quot;1000&quot; fileName=&quot;$(filebase).trees&quot; tree=&quot;@tree&quot;&gt;
+    &lt;skylineParameter idref=&quot;birthRateSV&quot;/&gt;
+    &lt;skylineParameter idref=&quot;samplingRateSV&quot;/&gt;
+    &lt;parameterization idref=&quot;parameterization&quot;/&gt;
+    &lt;finalSampleOffset spec=&quot;RealParameter&quot; value=&quot;0.0&quot;/&gt;
+    &lt;precision value=&quot;4&quot;/&gt;
+&lt;/logger&gt;
+</code></pre>
+<p><strong>Output:</strong></p>
+<p>The logger produces Newick trees with enhanced metadata at each node, including skyline parameter values at the node's time point.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../usage/" class="btn btn-neutral float-right" title="Setting Up Analyses">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://gabriele-marino.github.io/BELLA/usage/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Setting Up Analyses - BELLA</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Setting Up Analyses";
+        var mkdocs_page_input_path = "usage.md";
+        var mkdocs_page_url = "/BELLA/usage/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> BELLA
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Introduction</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../components/">Model Components</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Setting Up Analyses</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-simple-neural-network-for-sampling-rate">Example 1: Simple Neural Network for Sampling Rate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-multi-layer-network-with-multiple-predictors">Example 2: Multi-Layer Network with Multiple Predictors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-using-with-bdmm-prime">Example 3: Using with BDMM-Prime</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#weight-initialization-and-priors">Weight Initialization and Priors</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#normal-prior-recomended-default">Normal Prior (recomended default)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#laplace-prior-for-sparsity">Laplace Prior (for sparsity)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#operators-for-weight-parameters">Operators for Weight Parameters</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#standard-parameter-logging">Standard Parameter Logging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#weight-matrix-logging">Weight Matrix Logging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#enhanced-tree-logging">Enhanced Tree Logging</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../cite/">Citation and License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">BELLA</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Setting Up Analyses</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="usage">Usage</h1>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="example-1-simple-neural-network-for-sampling-rate">Example 1: Simple Neural Network for Sampling Rate</h3>
+<pre><code class="language-xml">
+&lt;changeTimes id=&quot;changeTimes&quot; spec=&quot;RealParameter&quot; value=&quot;0.5 1.0 1.5&quot;/&gt;
+
+        &lt;!-- Define predictors --&gt;
+&lt;parameter id=&quot;predictor1&quot; spec=&quot;RealParameter&quot; value=&quot;0.1 0.5 0.8 1.2&quot;/&gt;
+
+        &lt;!-- Define weights. Dimensions are set automatically! --&gt;
+&lt;parameter id=&quot;w1&quot; spec=&quot;RealParameter&quot; value=&quot;0.25&quot;/&gt;
+&lt;parameter id=&quot;w2&quot; spec=&quot;RealParameter&quot; value=&quot;0.25&quot;/&gt;
+
+        &lt;!-- Neural network with one hidden layer --&gt;
+&lt;samplingRate id=&quot;samplingRateSV&quot; spec=&quot;SkylineVectorParameter&quot;
+              changeTimes=&quot;@changeTimes&quot; processLength=&quot;@origin&quot;&gt;
+&lt;skylineValues id=&quot;samplingRate&quot; spec=&quot;bella.BayesMLP&quot; nodes=&quot;5&quot;&gt;
+    &lt;predictor idref=&quot;predictor1&quot;/&gt;
+    &lt;weights idref=&quot;w1&quot;/&gt;
+    &lt;weights idref=&quot;w2&quot;/&gt;
+    &lt;activationFunctionHidden spec=&quot;bella.activations.ReLu&quot;/&gt;
+    &lt;activationFunctionsOutput spec=&quot;bella.activations.Sigmoid&quot; upper=&quot;100.0&quot;/&gt;
+&lt;/skylineValues&gt;
+&lt;/samplingRate&gt;
+</code></pre>
+<h3 id="example-2-multi-layer-network-with-multiple-predictors">Example 2: Multi-Layer Network with Multiple Predictors</h3>
+<pre><code class="language-xml">&lt;!-- Two hidden layers with 10 and 3 nodes --&gt;
+&lt;samplingRate spec=&quot;bella.BayesMLP&quot; nodes=&quot;10 3&quot;&gt;
+    &lt;!-- Multiple predictors --&gt;
+    &lt;predictor spec=&quot;RealParameter&quot; value=&quot;1.0 2.0 3.0 4.0&quot;/&gt;
+    &lt;predictor spec=&quot;RealParameter&quot; value=&quot;0.5 1.5 2.5 3.5&quot;/&gt;
+
+    &lt;!-- Weights for each layer. BY default dimension is set automatically --&gt;
+    &lt;weights spec=&quot;RealParameter&quot; id=&quot;w1&quot; value=&quot;0.25&quot;/&gt;  &lt;!-- (2+1)*10 = 30 weights --&gt;
+    &lt;weights spec=&quot;RealParameter&quot; id=&quot;w2&quot; value=&quot;0.25&quot;/&gt;  &lt;!-- (10+1)*3 = 33 weights --&gt;
+    &lt;weights spec=&quot;RealParameter&quot; id=&quot;w3&quot; value=&quot;0.25&quot;/&gt;  &lt;!-- (3+1)*1 = 4 weights --&gt;
+&lt;/samplingRate&gt;
+</code></pre>
+<h3 id="example-3-using-with-bdmm-prime">Example 3: Using with BDMM-Prime</h3>
+<pre><code class="language-xml">&lt;distribution spec=&quot;BirthDeathMigrationDistribution&quot;
+              tree=&quot;@tree&quot; conditionOnSurvival=&quot;true&quot;&gt;
+    &lt;parameterization spec=&quot;CanonicalParameterization&quot; processLength=&quot;@origin&quot;&gt;
+        &lt;birthRate spec=&quot;SkylineVectorParameter&quot; skylineValues=&quot;@birthRate&quot;
+                   processLength=&quot;@origin&quot;/&gt;
+
+        &lt;!-- Neural network for time-varying sampling rate --&gt;
+        &lt;samplingRate spec=&quot;SkylineVectorParameter&quot; changeTimes=&quot;@changeTimes&quot;
+                      processLength=&quot;@origin&quot;&gt;
+            &lt;skylineValues spec=&quot;bella.BayesMLP&quot; nodes=&quot;10&quot;&gt;
+                &lt;predictor spec=&quot;RealParameter&quot; value=&quot;1.0 2.0 3.0&quot;/&gt;
+                &lt;weights spec=&quot;RealParameter&quot; id=&quot;w1&quot;/&gt;
+                &lt;weights spec=&quot;RealParameter&quot; id=&quot;w2&quot;/&gt;
+            &lt;/skylineValues&gt;
+        &lt;/samplingRate&gt;
+
+        &lt;deathRate spec=&quot;SkylineVectorParameter&quot; skylineValues=&quot;@deathRate&quot;
+                   processLength=&quot;@origin&quot;/&gt;
+        &lt;removalProb spec=&quot;SkylineVectorParameter&quot;&gt;
+            &lt;skylineValues spec=&quot;RealParameter&quot; value=&quot;1.0&quot;/&gt;
+        &lt;/removalProb&gt;
+    &lt;/parameterization&gt;
+&lt;/distribution&gt;
+</code></pre>
+<h2 id="weight-initialization-and-priors">Weight Initialization and Priors</h2>
+<p>The dimension for a weight paramater carrying weights for a particular layer is set automatically!
+Weights should be given appropriate priors. Common choices:</p>
+<h3 id="normal-prior-recomended-default">Normal Prior (recomended default)</h3>
+<pre><code class="language-xml">&lt;prior id=&quot;weightsPrior&quot; x=&quot;@w1&quot;&gt;
+    &lt;Normal name=&quot;distr&quot;&gt;
+        &lt;parameter spec=&quot;RealParameter&quot; estimate=&quot;false&quot; name=&quot;mean&quot;&gt;0.0&lt;/parameter&gt;
+        &lt;parameter spec=&quot;RealParameter&quot; estimate=&quot;false&quot; name=&quot;sigma&quot;&gt;1.0&lt;/parameter&gt;
+    &lt;/Normal&gt;
+&lt;/prior&gt;
+</code></pre>
+<h3 id="laplace-prior-for-sparsity">Laplace Prior (for sparsity)</h3>
+<pre><code class="language-xml">&lt;prior id=&quot;weightsPrior&quot; x=&quot;@w1&quot;&gt;
+    &lt;LaplaceDistribution name=&quot;distr&quot;&gt;
+        &lt;parameter spec=&quot;RealParameter&quot; estimate=&quot;false&quot; name=&quot;mu&quot;&gt;0.0&lt;/parameter&gt;
+        &lt;parameter spec=&quot;RealParameter&quot; estimate=&quot;false&quot; name=&quot;scale&quot;&gt;1.0&lt;/parameter&gt;
+    &lt;/LaplaceDistribution&gt;
+&lt;/prior&gt;
+</code></pre>
+<h2 id="operators-for-weight-parameters">Operators for Weight Parameters</h2>
+<p>Use (Bactrian) random walk operator for each weight parameter:</p>
+<pre><code class="language-xml">&lt;!-- Random walk operator --&gt;
+&lt;operator spec=&quot;RealRandomWalkOperator&quot; parameter=&quot;@w1&quot;
+          weight=&quot;30.0&quot; windowSize=&quot;0.5&quot;/&gt;
+</code></pre>
+<p>or</p>
+<pre><code class="language-xml">&lt;!-- Bactrian random walk operator --&gt;
+&lt;operator spec=&quot;BactrianRandomWalkOperator&quot; parameter=&quot;@w1&quot;
+          weight=&quot;30.0&quot; windowSize=&quot;0.5&quot;/&gt;
+</code></pre>
+<h2 id="logging">Logging</h2>
+<h3 id="standard-parameter-logging">Standard Parameter Logging</h3>
+<p>Following from previous examples where we used BELLA for sampling rate estimation:</p>
+<pre><code class="language-xml">&lt;logger id=&quot;tracelog&quot; fileName=&quot;$(filebase).log&quot; logEvery=&quot;1000&quot;&gt;
+    &lt;log idref=&quot;samplingRate&quot;/&gt;  &lt;!-- Logs NN output values --&gt;
+    &lt;log idref=&quot;w1&quot;/&gt;             &lt;!-- Logs weight values --&gt;
+    &lt;log idref=&quot;w2&quot;/&gt;
+&lt;/logger&gt;
+</code></pre>
+<h3 id="weight-matrix-logging">Weight Matrix Logging</h3>
+<p>The BayesMLP class in BELLA implements <code>Loggable</code>, allowing detailed weight logging:</p>
+<pre><code class="language-xml">&lt;logger fileName=&quot;weights.log&quot; logEvery=&quot;1000&quot;&gt;
+    &lt;log spec=&quot;bella.BayesMLP&quot; idref=&quot;samplingRate&quot;/&gt;
+&lt;/logger&gt;
+</code></pre>
+<p>This logs all weights in matrix format with headers like <code>W.Layer1[i][j]</code> where <code>i</code> is the input node index (including bias) and <code>j</code> is the output node index.</p>
+<h3 id="enhanced-tree-logging">Enhanced Tree Logging</h3>
+<p>Logger which extends TypedNodeTreeLogger to additionally log values from SkylineParameters at each node in the tree. For every node, it gets the node's age, converts it to time using Parameterization, and logs the parameter values at that time in the node metadata.</p>
+<pre><code class="language-xml">
+&lt;logger spec=&quot;bella.SkylineNodeTreeLogger2&quot;
+        fileName=&quot;$(filebase).trees&quot; logEvery=&quot;1000&quot; tree=&quot;@tree&quot;&gt;
+    &lt;skylineParameter idref=&quot;samplingRateSV&quot;/&gt;
+    &lt;parameterization idref=&quot;parameterization&quot;/&gt;
+&lt;/logger&gt;
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../components/" class="btn btn-neutral float-left" title="Model Components"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../cite/" class="btn btn-neutral float-right" title="Citation and License">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../components/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../cite/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
