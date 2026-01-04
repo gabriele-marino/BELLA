@@ -1,2 +1,8 @@
-*.DS_Store
 *.iml
+.idea
+out
+
+*.DS_Store
+
+*.trees
+*.log

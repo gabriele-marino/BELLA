@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<beast
+    namespace="
+    :beast.base.evolution.operator.kernel
+    :beast.base.inference
+    :beast.base.inference.distribution
+    :beast.base.inference.operator.kernel
+    :beast.base.inference.parameter
+    :bdmmprime.distribution
+    :bdmmprime.mapping
+    :bdmmprime.parameterization
+    :feast.fileio"
+    version="2.5"
+>
+    <map name="Uniform">beast.base.inference.distribution.Uniform</map>
+    <map name="Normal">beast.base.inference.distribution.Normal</map>
+
+    <map name="TreeFromNewickFile">feast.fileio.TreeFromNewickFile</map>
+
+    <TreeFromNewickFile id="tree" fileName="$(treeFile)" IsLabelledNewick="true" adjustTipHeights='false'/>
+
+    <Normal id="weightsPrior" mean="0" sigma="1"/>
+    <Uniform id="samplingRatePrior" lower="$(samplingRateLower)" upper="$(samplingRateUpper)"/>
+
+    <run spec="MCMC" chainLength="$(chainLength)">
+        <state id="state">
+            <plate var="n" range="$(layersRange)">
+                <stateNode spec="RealParameter" id="birthRateW$(n)" value="0"/>
+                <stateNode spec="RealParameter" id="deathRateW$(n)" value="0"/>
+            </plate>
+            <stateNode spec="RealParameter" id="samplingRate" value="$(samplingRateInit)"/>
+        </state>
+
+        <distribution id="posterior" spec="CompoundDistribution">
+            <distribution id="likelihood" spec="CompoundDistribution">
+                <distribution spec="BirthDeathMigrationDistribution" tree="@tree">
+                    <parameterization id="parameterization" spec="CanonicalParameterization" processLength="$(processLength)">
+                        <birthRate id="birthRateSP" spec="SkylineVectorParameter" changeTimes="$(changeTimes)">
+                            <skylineValues id="birthRate" spec="bella.BayesMLP" nodes="$(nodes)">
+                                <predictor spec="RealParameterFromXSV" fileName="$(birthRatePredictorFile)"/>
+                                <plate var="n" range="$(layersRange)">
+                                    <weights idref="birthRateW$(n)"/>
+                                </plate>
+                                <outputActivation spec="bella.activations.Sigmoid" lower="$(birthRateLower)" upper="$(birthRateUpper)"/>
+                            </skylineValues>
+                        </birthRate>
+                        <deathRate id="deathRateSP" spec="SkylineVectorParameter" changeTimes="$(changeTimes)">
+                            <skylineValues id="deathRate" spec="bella.BayesMLP" nodes="$(nodes)">
+                                <predictor spec="RealParameter" value="$(deathRatePredictor)"/>
+                                <plate var="n" range="$(layersRange)">
+                                    <weights idref="deathRateW$(n)"/>
+                                </plate>
+                                <outputActivation spec="bella.activations.Sigmoid" lower="$(deathRateLower)" upper="$(deathRateUpper)"/>
+                            </skylineValues>
+                        </deathRate>
+                        <samplingRate id="samplingRateSP" spec="SkylineVectorParameter" skylineValues="@samplingRate"/>
+                        <removalProb spec="SkylineVectorParameter" skylineValues="0"/>
+                        <rhoSampling spec="TimedParameter" values="$(rhoSampling)" times="$(processLength)"/>
+                    </parameterization>
+                </distribution>
+            </distribution>
+
+            <distribution id="prior" spec="CompoundDistribution">
+                <plate var="n" range="$(layersRange)">
+                    <distribution spec="Prior" x="@birthRateW$(n)" distr="@weightsPrior"/>
+                    <distribution spec="Prior" x="@deathRateW$(n)" distr="@weightsPrior"/>
+                </plate>
+                <distribution spec="Prior" x="@samplingRate" distr="@samplingRatePrior"/>
+            </distribution>
+        </distribution>
+
+        <plate var="n" range="$(layersRange)">
+            <operator spec="BactrianRandomWalkOperator" parameter="@birthRateW$(n)" weight="30.0"/>
+            <operator spec="BactrianRandomWalkOperator" parameter="@deathRateW$(n)" weight="30.0"/>
+        </plate>
+        <operator spec="BactrianScaleOperator" parameter="@samplingRate" weight="30.0"/>
+
+        <logger spec="Logger" logEvery="$(logEvery)">
+            <log idref="posterior"/>
+            <log arg="@posterior" spec="util.ESS"/>
+            <log idref="likelihood"/>
+            <log arg="@likelihood" spec="util.ESS"/>
+            <log idref="prior"/>
+            <log arg="@prior" spec="util.ESS"/>
+        </logger>
+
+        <logger spec="Logger" fileName="FBD.log" logEvery="$(logEvery)" model="@posterior">
+            <log idref="posterior"/>
+            <log idref="prior"/>
+            <log idref="likelihood"/>
+            <log idref="samplingRate"/>
+            <log idref="birthRateSP"/>
+            <log idref="deathRateSP"/>
+            <log idref="birthRate"/>
+            <log idref="deathRate"/>
+        </logger>
+
+        <logger fileName="FBD.trees" logEvery="$(logEvery)" mode="tree">
+            <log spec="bella.SkylineNodeTreeLogger" parameterization="@parameterization" precision="4" typedTree="@tree">
+                <skylineParameter idref="birthRateSP"/>
+                <skylineParameter idref="deathRateSP"/>
+            </log>
+        </logger>
+    </run>
+</beast>

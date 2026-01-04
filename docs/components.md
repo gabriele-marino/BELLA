@@ -54,14 +54,18 @@ Matrix layout:
 **Usage:**
 
 ```xml
+
 <bella.BayesMLP id="samplingRate" nodes="10 5">
     <predictor spec="RealParameter" value="1.0 2.0 3.0"/>
     <predictor spec="RealParameter" value="0.5 1.5 2.5"/>
-    <weights id="w1" spec="RealParameter" value="0.1" dimension="30"/>  <!--Layer 1. Dimensio is set automatically to 30: (2+1)*10 -->
-    <weights id="w2" spec="RealParameter" value="0.1"dimension="55"/>  <!-- Layer 2. Dimensio is set automatically to 55: (10+1)*5 -->
-    <weights id="w3" spec="RealParameter" value="0.1"dimension="6"/>   <!-- Output. Dimensio is set automatically to 6: (5+1)*1 -->
-    <activationFunctionHidden spec="bella.ReLu"/>
-    <activationFunctionsOutput spec="bella.Sigmoid"/>
+    <weights id="w1" spec="RealParameter" value="0.1"
+             dimension="30"/>  <!--Layer 1. Dimensio is set automatically to 30: (2+1)*10 -->
+    <weights id="w2" spec="RealParameter" value="0.1"
+             dimension="55"/>  <!-- Layer 2. Dimensio is set automatically to 55: (10+1)*5 -->
+    <weights id="w3" spec="RealParameter" value="0.1"
+             dimension="6"/>   <!-- Output. Dimensio is set automatically to 6: (5+1)*1 -->
+    <activationFunctionHidden spec="bella.activations.ReLu"/>
+    <activationFunctionsOutput spec="bella.activations.Sigmoid"/>
 </bella.BayesMLP>
 ```
 
@@ -73,8 +77,10 @@ f(x) = max(0, x)
 ```
 
 **Usage:**
+
 ```xml
-<activationFunctionHidden spec="bella.ReLu"/>
+
+<activationFunctionHidden spec="bella.activations.ReLu"/>
 ```
 
 **Properties:**
@@ -95,8 +101,10 @@ f(x) = lower + (upper - lower) / (1 + exp(-shape * (x - midpoint)))
 * `midpoint` (optional): Inflection point (default: 0.0)
 
 **Usage:**
+
 ```xml
-<activationFunctionsOutput spec="bella.Sigmoid" lower="0.0" upper="100.0">
+
+<activationFunctionsOutput spec="bella.activations.Sigmoid" lower="0.0" upper="100.0">
     <shape spec="RealParameter" value="2.0"/>
     <midpoint spec="RealParameter" value="0.5"/>
 </activationFunctionsOutput>
@@ -114,8 +122,10 @@ f(x) = log(1 + exp(x))
 ```
 
 **Usage:**
+
 ```xml
-<activationFunctionHidden spec="bella.SoftPlus"/>
+
+<activationFunctionHidden spec="bella.activations.SoftPlus"/>
 ```
 
 **Properties:**
@@ -130,8 +140,10 @@ f(x) = tanh(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x))
 ```
 
 **Usage:**
+
 ```xml
-<activationFunctionHidden spec="bella.Tanh"/>
+
+<activationFunctionHidden spec="bella.activations.Tanh"/>
 ```
 
 **Properties:**
@@ -140,7 +152,7 @@ f(x) = tanh(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x))
 * Zero-centered
 * Often used in hidden layers
 
-## 3. SkylineNodeTreeLogger
+## 3. bella.SkylineNodeTreeLogger
 
 Enhanced tree logger that combines typed node information with skyline parameter values.
 
@@ -152,8 +164,10 @@ Enhanced tree logger that combines typed node information with skyline parameter
 * `precision` (optional): Decimal places for logging (default: 6)
 
 **Usage:**
+
 ```xml
-<logger id="treelog" spec="bella.SkylineNodeTreeLogger"
+
+<logger id="treelog" spec="bella.SkylineNodeTreeLogger2"
         logEvery="1000" fileName="$(filebase).trees" tree="@tree">
     <skylineParameter idref="birthRateSV"/>
     <skylineParameter idref="samplingRateSV"/>

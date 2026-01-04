@@ -5,25 +5,26 @@
 ### Example 1: Simple Neural Network for Sampling Rate
 
 ```xml
+
 <changeTimes id="changeTimes" spec="RealParameter" value="0.5 1.0 1.5"/>
 
-<!-- Define predictors -->
+        <!-- Define predictors -->
 <parameter id="predictor1" spec="RealParameter" value="0.1 0.5 0.8 1.2"/>
 
-<!-- Define weights. Dimensions are set automatically! -->
+        <!-- Define weights. Dimensions are set automatically! -->
 <parameter id="w1" spec="RealParameter" value="0.25"/>
 <parameter id="w2" spec="RealParameter" value="0.25"/>
 
-<!-- Neural network with one hidden layer -->
+        <!-- Neural network with one hidden layer -->
 <samplingRate id="samplingRateSV" spec="SkylineVectorParameter"
               changeTimes="@changeTimes" processLength="@origin">
-    <skylineValues id="samplingRate" spec="bella.BayesMLP" nodes="5">
-        <predictor idref="predictor1"/>
-        <weights idref="w1"/>
-        <weights idref="w2"/>
-        <activationFunctionHidden spec="bella.ReLu"/>
-        <activationFunctionsOutput spec="bella.Sigmoid" upper="100.0"/>
-    </skylineValues>
+<skylineValues id="samplingRate" spec="bella.BayesMLP" nodes="5">
+    <predictor idref="predictor1"/>
+    <weights idref="w1"/>
+    <weights idref="w2"/>
+    <activationFunctionHidden spec="bella.activations.ReLu"/>
+    <activationFunctionsOutput spec="bella.activations.Sigmoid" upper="100.0"/>
+</skylineValues>
 </samplingRate>
 ```
 
@@ -143,7 +144,8 @@ This logs all weights in matrix format with headers like `W.Layer1[i][j]` where 
 Logger which extends TypedNodeTreeLogger to additionally log values from SkylineParameters at each node in the tree. For every node, it gets the node's age, converts it to time using Parameterization, and logs the parameter values at that time in the node metadata.
 
 ```xml
-<logger spec="bella.SkylineNodeTreeLogger"
+
+<logger spec="bella.SkylineNodeTreeLogger2"
         fileName="$(filebase).trees" logEvery="1000" tree="@tree">
     <skylineParameter idref="samplingRateSV"/>
     <parameterization idref="parameterization"/>

@@ -1,4 +1,5 @@
 # BELLA
+## Bayesian Evolutionary Layered Learning Architectures
 
 BEAST2 package dependencies
 --------------------
@@ -49,3 +50,5 @@ in the directory `../beast2` and the latest
 in the directory `../beastfx` relative to the BELLA root, the build
 script will attempt to download them automatically.  Thus, most builds
 will require a network connection.
+
+

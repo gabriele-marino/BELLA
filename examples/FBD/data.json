@@ -1,0 +1,20 @@
+{
+    "treeFile": "examples/FBD/tree.nwk",
+    "samplingRateLower": 0,
+    "samplingRateUpper": 5,
+    "samplingRateInit": 2.5,
+    "layersRange": "0,1,2",
+    "processLength": 3,
+    "changeTimes": "1 2",
+    "nodes": "16 8",
+    "deathRatePredictor": "0.0 0.5 1.0",
+    "birthRatePredictorFile": "examples/FBD/birth_rate_predictor.csv",
+    "birthRateLower": 0,
+    "birthRateUpper": 5,
+    "deathRateLower": 0,
+    "deathRateUpper": 5,
+    "samplingRate": "0.5 0.5 0.5",
+    "rhoSampling": "1.0",
+    "chainLength": 100000,
+    "logEvery": 1000
+}
