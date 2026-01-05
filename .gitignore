@@ -1,8 +1,12 @@
 *.iml
 .idea
 out
+build
+dist
 
-*.DS_Store
+.venv
 
 *.trees
 *.log
+
+*.DS_Store

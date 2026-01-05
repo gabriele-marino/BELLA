@@ -1,10 +1,11 @@
 site_name: BELLA
 site_url: https://gabriele-marino.github.io/BELLA/
+docs_dir: doc
 theme:
-  name: readthedocs
+  name: cinder
 nav:
-  - Introduction: index.md
+  - Introduction: introduction.md
   - Installation: installation.md
-  - Model Components: components.md
-  - Setting Up Analyses: usage.md
-  - Citation and License: cite.md
+  - Components: components.md
+  - Usage: usage.md
+  - Cite: cite.md
