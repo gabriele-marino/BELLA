@@ -18,6 +18,7 @@
     <!-- Define build and distribution directories -->
     <property name="build" location="build"/>
     <property name="beastBuild" location="${build}/beast"/>
+    <property name="bellaBuild" location="${build}/bella"/>
     <property name="deps" location="${build}/deps"/>
     <property name="dist" location="dist"/>
     <property name="package" location="${dist}/package"/>
@@ -79,8 +80,8 @@
 
     <!-- Compile BELLA source code -->
     <target name="compile" depends="install-dependencies">
-        <mkdir dir="${build}/bella"/>
-        <javac srcdir="src" destdir="${build}/bella" release="${releaseVersion}" includeantruntime="false" fork="yes" encoding="UTF-8">
+        <mkdir dir="${bellaBuild}"/>
+        <javac srcdir="src" destdir="${bellaBuild}" release="${releaseVersion}" includeantruntime="false" fork="yes" encoding="UTF-8">
             <classpath>
                 <pathelement path="${beastBuild}"/>
                 <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
@@ -104,7 +105,7 @@
 
         <jar jarfile="${package}/${projID}.src.jar" basedir="src"/>
 
-        <jar jarfile="${package}/lib/${projID}.jar" basedir="${build}"/>
+        <jar jarfile="${package}/lib/${projID}.jar" basedir="${bellaBuild}"/>
 
         <mkdir dir="${package}/fxtemplates"/>
         <copy todir="${package}/fxtemplates">
