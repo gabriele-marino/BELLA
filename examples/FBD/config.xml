@@ -94,12 +94,5 @@
             <log idref="birthRate"/>
             <log idref="deathRate"/>
         </logger>
-
-        <logger fileName="FBD.trees" logEvery="$(logEvery)" mode="tree">
-            <log spec="bella.SkylineNodeTreeLogger" parameterization="@parameterization" precision="4" typedTree="@tree">
-                <skylineParameter idref="birthRateSP"/>
-                <skylineParameter idref="deathRateSP"/>
-            </log>
-        </logger>
     </run>
 </beast>

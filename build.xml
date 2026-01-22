@@ -19,7 +19,6 @@
     <property name="build" location="build"/>
     <property name="beastBuild" location="${build}/beast"/>
     <property name="bellaBuild" location="${build}/bella"/>
-    <property name="deps" location="${build}/deps"/>
     <property name="dist" location="dist"/>
     <property name="package" location="${dist}/package"/>
 
@@ -59,33 +58,13 @@
         </javac>
     </target>
 
-    <!-- Install dependencies using BEAST 2 package manager -->
-    <target name="install-dependencies" depends="build-beast">
-        <mkdir dir="${deps}"/>
-        <java fork="true" classname="beast.pkgmgmt.PackageManager">
-            <jvmarg line="-Dbeast.user.package.dir=${deps}"/>
-            <arg line="-addRepository https://tgvaughan.github.io/BDMM-Prime/package.xml"/>
-            <classpath>
-                <pathelement path="${beastBuild}"/>
-            </classpath>
-        </java>
-        <java fork="true" classname="beast.pkgmgmt.PackageManager">
-            <jvmarg line="-Dbeast.user.package.dir=${deps}"/>
-            <arg line="-add BDMM-Prime"/>
-            <classpath>
-                <pathelement path="${beastBuild}"/>
-            </classpath>
-        </java>
-    </target>
-
     <!-- Compile BELLA source code -->
-    <target name="compile" depends="install-dependencies">
+    <target name="compile" depends="build-beast">
         <mkdir dir="${bellaBuild}"/>
         <javac srcdir="src" destdir="${bellaBuild}" release="${releaseVersion}" includeantruntime="false" fork="yes" encoding="UTF-8">
             <classpath>
                 <pathelement path="${beastBuild}"/>
                 <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
-                <fileset dir="${deps}/BDMM-Prime" includes="**/*.jar"/>
             </classpath>
         </javac>
     </target>
