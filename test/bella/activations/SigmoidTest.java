@@ -22,7 +22,6 @@ public class SigmoidTest {
 
         RealMatrix output = sigmoid.apply(input);
 
-        // Check expected values
         assertTrue(output.getEntry(0, 0) < 0.5, "sigmoid(-1) should be < 0.5");
         assertEquals(0.5, output.getEntry(0, 1), 1e-6, "sigmoid(0) should be ~0.5");
         assertTrue(output.getEntry(1, 0) > 0.5, "sigmoid(1) should be > 0.5");

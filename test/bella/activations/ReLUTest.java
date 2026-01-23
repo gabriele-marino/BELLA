@@ -20,7 +20,6 @@ public class ReLUTest {
 
         RealMatrix output = relu.apply(input);
 
-        // Expect same values for positive inputs
         assertArrayEquals(input.getData(), output.getData());
     }
 

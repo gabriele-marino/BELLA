@@ -13,7 +13,7 @@ class ParameterUtilTest {
 
     @Test
     void testMinMaxNormalizeNormalCase() {
-        RealParameter param = new RealParameter("1.0 2.0 3.0 4.0"); // values: [1,2,3,4]
+        RealParameter param = new RealParameter("1.0 2.0 3.0 4.0");
         ParameterUtil.minMaxNormalize(param);
 
         double[] expected = {0.0, 0.333, 0.666, 1.0};
@@ -50,7 +50,7 @@ class ParameterUtilTest {
         params.add(new RealParameter("1.0 2.0 3.0"));
         params.add(new RealParameter("3.0 4.0 5.0"));
 
-        RealMatrix matrix = ParameterUtil.toRealMatrix(params); // replace YourClass with actual class
+        RealMatrix matrix = ParameterUtil.toRealMatrix(params);
 
         assertEquals(2, matrix.getRowDimension());
         assertEquals(3, matrix.getColumnDimension());
