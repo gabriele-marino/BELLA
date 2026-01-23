@@ -32,15 +32,15 @@ class MLPUtilTest {
 
         // Manually compute expected result
         double[][] expected = new double[3][2];
-        // Row 0: z = input[0] * weightsPart + bias
-        expected[0][0] = 0.5 + 7.0*7.0 + 3.0*2.0; // 0.5 + 1 + 6 = 7.5
-        expected[0][1] = -0.5 + 2.0*7.0 + 4.0*2.0; // -0.5 + 2 + 8 = 9.5
-        // Row 1
-        expected[1][0] = 0.5 + 7.0*3.0 + 3.0*4.0; // 0.5 + 3 + 12 = 15.5
-        expected[1][1] = -0.5 + 2.0*3.0 + 4.0*4.0; // -0.5 + 6 + 16 = 21.5
-        // Row 2
-        expected[2][0] = 0.5 + 7.0*5.0 + 3.0*6.0; // 0.5 + 1 + 6 = 7.5
-        expected[2][1] = -0.5 + 2.0*5.0 + 4.0*6.0; // -0.5 + 2 + 8 = 9.5
+        
+        expected[0][0] = 0.5 + 7.0*7.0 + 3.0*2.0;
+        expected[0][1] = -0.5 + 2.0*7.0 + 4.0*2.0;
+
+        expected[1][0] = 0.5 + 7.0*3.0 + 3.0*4.0;
+        expected[1][1] = -0.5 + 2.0*3.0 + 4.0*4.0;
+
+        expected[2][0] = 0.5 + 7.0*5.0 + 3.0*6.0;
+        expected[2][1] = -0.5 + 2.0*5.0 + 4.0*6.0;
 
         // Check each row
         for (int i = 0; i < expected.length; i++) {
