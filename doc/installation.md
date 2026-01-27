@@ -1,50 +1,35 @@
 # Installation
 
-## BEAST2 package dependencies
+Get BELLA running in a few minutes ⏱️.
 
-BELLA strictly depends on the following BEAST2 packages (install them before installing BELLA):
+## 1) Prerequisites
 
-* [BDMM-Prime](https://github.com/tgvaughan/BDMM-Prime)
+- **Java 17+** ☕
+- **BEAST 2.7+** 🐾
 
-For most functions and to run our example files, we require additional packages:
+## 2) Install BELLA via BEAUti
 
-* [feast](https://github.com/tgvaughan/BDMM-Prime/feast)
+1. Open **BEAUti**.
+2. Go to `File` -> `Manage Packages`.
+3. Click `Package repositories`.
+4. Click `Add URL` and paste:
+   ```
+   https://raw.githubusercontent.com/gabriele-marino/BELLA/main/package.xml
+   ```
+5. Click `OK` to add the repository.
+6. Back in the Package Manager, find **BELLA**, select it, and click **Install/Upgrade**.
 
-## Via BEAUti
+That is it - BELLA is now available inside BEAST ✅
 
-BELLA requires a working installation of BEAST 2.7 which can be obtained from https://www.beast2.org/. 
-The package itself can then be installed via the built-in package manager in the following way:
+## 3) Extra packages used by the examples
 
-1. Open BEAUti.
-2. From the `File` menu select `Manage Packages`.
-3. Click the `Package repositories` button at the bottom of the dialog box.
-4. Click `Add URL` and enter the following repository URL:
-   [tps://github.com/gabriele-marino/BELLA/package.xml)](tps://github.com/gabriele-marino/BELLA/package.xml).
+The example tutorials use additional BEAST packages:
 
-## From Source Code
+- [BDMM-Prime](https://tgvaughan.github.io/BDMM-Prime/)
+- [Feast](https://tgvaughan.github.io/feast/)
 
-You may also install BELLA manually. Follow instructions at [https://www.beast2.org/managing-packages](https://www.beast2.org/managing-packages/#:~:text=If%20for%20some%20reason%20you,zip%20inside%20the%20VSS%20directory) and use the `.zip` file from your preferred [release](https://github.com/gabriele-marino/BELLA/releases). 
+Install them the same way from **BEAUti -> Manage Packages**.
 
-## Building from Source Code
+## 4) Quick sanity check
 
-To build BELLA from source you'll need the following to be installed:
-
-* OpenJDK version 17 or greater
-* A recent version of OpenJFX
-* the Apache Ant build system
-
-Once these are installed and in your execution path, issue the following
-command from the root directory of this repository:
-
-```sh
-JAVA_FX_HOME=/path/to/openjfx/ ant
-```
-The package archive will be left in the `dist/` subdirectory.
-
-Note that unless you already have a local copy of the latest
-[BEAST 2 source](https://github.com/CompEvol/beast2)
-in the directory `../beast2` and the latest
-[BeastFX source](https://github.com/CompEvol/beastfx)
-in the directory `../beastfx` relative to the BELLA root, the build
-script will attempt to download them automatically.  Thus, most builds
-will require a network connection.
+If BEAST starts and BELLA is visible in the Package Manager list, you are good to go 🎉.

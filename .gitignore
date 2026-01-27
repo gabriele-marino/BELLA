@@ -4,7 +4,7 @@ out
 build
 dist
 
-.venv
+env
 
 *.trees
 *.log

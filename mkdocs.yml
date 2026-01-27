@@ -4,8 +4,9 @@ docs_dir: doc
 theme:
   name: cinder
 nav:
-  - Introduction: introduction.md
   - Installation: installation.md
+  - Tutorials:
+      - Overview: tutorials/index.md
+      - FBD example: tutorials/fbd.md
   - Components: components.md
-  - Usage: usage.md
   - Cite: cite.md

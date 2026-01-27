@@ -12,39 +12,50 @@
     :feast.fileio"
     version="2.5"
 >
+    <!-- Note: "$(<...>)" values are filled from data.json via the `-DF` beast options. -->
+
+    <!-- Shortcuts for classes used below. -->
     <map name="Uniform">beast.base.inference.distribution.Uniform</map>
     <map name="Normal">beast.base.inference.distribution.Normal</map>
 
     <map name="TreeFromNewickFile">feast.fileio.TreeFromNewickFile</map>
 
+    <!-- Fixed input tree for this demo. -->
     <TreeFromNewickFile id="tree" fileName="$(treeFile)" IsLabelledNewick="true" adjustTipHeights='false'/>
 
+    <!-- Priors on network weights and sampling rate. -->
     <Normal id="weightsPrior" mean="0" sigma="1"/>
     <Uniform id="samplingRatePrior" lower="$(samplingRateLower)" upper="$(samplingRateUpper)"/>
 
     <run spec="MCMC" chainLength="$(chainLength)">
         <state id="state">
+            <!-- MLP weights for birth and death rate networks. -->
             <plate var="n" range="$(layersRange)">
                 <stateNode spec="RealParameter" id="birthRateW$(n)" value="0"/>
                 <stateNode spec="RealParameter" id="deathRateW$(n)" value="0"/>
             </plate>
+            <!-- Sampling rate parameter. -->
             <stateNode spec="RealParameter" id="samplingRate" value="$(samplingRateInit)"/>
         </state>
 
         <distribution id="posterior" spec="CompoundDistribution">
             <distribution id="likelihood" spec="CompoundDistribution">
                 <distribution spec="BirthDeathMigrationDistribution" tree="@tree">
+                    <!-- FBD parameterization with time-varying rates. -->
                     <parameterization id="parameterization" spec="CanonicalParameterization" processLength="$(processLength)">
                         <birthRate id="birthRateSP" spec="SkylineVectorParameter" changeTimes="$(changeTimes)">
+                            <!-- BELLA MLP maps predictor series to birth-rate skyline values. -->
                             <skylineValues id="birthRate" spec="bella.BayesMLP" nodes="$(nodes)">
                                 <predictor spec="RealParameterFromXSV" fileName="$(birthRatePredictorFile)"/>
                                 <plate var="n" range="$(layersRange)">
                                     <weights idref="birthRateW$(n)"/>
                                 </plate>
+                                <!-- Sigmoid clamps outputs to the specified bounds. -->
                                 <outputActivation spec="bella.activations.Sigmoid" lower="$(birthRateLower)" upper="$(birthRateUpper)"/>
                             </skylineValues>
                         </birthRate>
                         <deathRate id="deathRateSP" spec="SkylineVectorParameter" changeTimes="$(changeTimes)">
+                            <!-- Similarly, for the death rate -->
                             <skylineValues id="deathRate" spec="bella.BayesMLP" nodes="$(nodes)">
                                 <predictor spec="RealParameter" value="$(deathRatePredictor)"/>
                                 <plate var="n" range="$(layersRange)">
@@ -53,6 +64,7 @@
                                 <outputActivation spec="bella.activations.Sigmoid" lower="$(deathRateLower)" upper="$(deathRateUpper)"/>
                             </skylineValues>
                         </deathRate>
+                        <!-- Sampling-rate and other FBD parameters. -->
                         <samplingRate id="samplingRateSP" spec="SkylineVectorParameter" skylineValues="@samplingRate"/>
                         <removalProb spec="SkylineVectorParameter" skylineValues="0"/>
                         <rhoSampling spec="TimedParameter" values="$(rhoSampling)" times="$(processLength)"/>
@@ -61,6 +73,7 @@
             </distribution>
 
             <distribution id="prior" spec="CompoundDistribution">
+                <!-- Apply priors to all MLP weights and the sampling rate. -->
                 <plate var="n" range="$(layersRange)">
                     <distribution spec="Prior" x="@birthRateW$(n)" distr="@weightsPrior"/>
                     <distribution spec="Prior" x="@deathRateW$(n)" distr="@weightsPrior"/>
@@ -69,12 +82,14 @@
             </distribution>
         </distribution>
 
+        <!-- Proposal operators for MCMC. -->
         <plate var="n" range="$(layersRange)">
             <operator spec="BactrianRandomWalkOperator" parameter="@birthRateW$(n)" weight="30.0"/>
             <operator spec="BactrianRandomWalkOperator" parameter="@deathRateW$(n)" weight="30.0"/>
         </plate>
         <operator spec="BactrianScaleOperator" parameter="@samplingRate" weight="30.0"/>
 
+        <!-- Console logger for quick feedback. -->
         <logger spec="Logger" logEvery="$(logEvery)">
             <log idref="posterior"/>
             <log arg="@posterior" spec="util.ESS"/>
@@ -84,6 +99,7 @@
             <log arg="@prior" spec="util.ESS"/>
         </logger>
 
+        <!-- File logger for traces and skyline rates. -->
         <logger spec="Logger" fileName="FBD.log" logEvery="$(logEvery)" model="@posterior">
             <log idref="posterior"/>
             <log idref="prior"/>

@@ -1,182 +1,138 @@
+# Components (Java source walkthrough)
 
-## 1. BayesMLP
+This section explains the BELLA Java code in detail so you can confidently configure and extend it 🧩. File paths are relative to the repository.
 
-The main neural network class that implements a multi-layer perceptron.
+## Package map
 
-**Inputs:**
-* `predictor` (required): One or more RealParameter objects containing predictor variables
-* `weights` (required): RealParameter objects for each layer's weights
-* `nodes` (optional): List of integers specifying hidden layer sizes
-* `outNodes` (optional): Number of output nodes (default: 1)
-* `activationFunctionHidden` (optional): Activation function for hidden layers (default: ReLU)
-* `activationFunctionsOutput` (optional): Activation function for output layer (default: Sigmoid)
+- `src/bella/BayesMLP.java` - Bayesian MLP component used in BEAST XML.
+- `src/bella/util/MLPUtil.java` - MLP forward-pass utilities.
+- `src/bella/util/ParameterUtil.java` - parameter normalization and matrix conversion.
+- `src/bella/activations/*.java` - activation functions (ReLU, Sigmoid, Tanh, SoftPlus, Identity).
 
-**Architecture:**
+## `bella.BayesMLP` (core model node)
 
-The neural network automatically determines its structure based on:
-* Number of predictors (input dimension)
-* Hidden layer configuration (`nodes` parameter)
-* Output dimension (`outNodes` parameter)
+`BayesMLP` is the main BELLA component you reference in a BEAST XML. It extends `CalculationNode` and implements `Function` and `Loggable`, which makes it:
 
-Each layer includes a bias term. The weight dimensions are calculated as:
-* **Hidden layer i**: `(n_inputs[i] + 1) × n_nodes[i]`
-* **Output layer**: `(n_hidden_last + 1) × n_outputs`
+- **A value-producing node** (`Function`) - it outputs a vector of predicted rates.
+- **A recalculating node** (`CalculationNode`) - it recomputes only when needed.
+- **A loggable node** (`Loggable`) - it can print its weights to the BEAST log.
 
-**Predictor Normalization**
+### Inputs (BEAST XML attributes)
 
-All predictors are automatically normalized to [0,1] using min-max normalization:
+- `predictor` (required): list of `RealParameter` objects. Each parameter is a vector of predictor values.
+  - All predictors **must have the same length**, because they form a matrix.
+- `weights` (required): list of `RealParameter` objects, one per layer connection.
+  - Each is a **flattened weight matrix** (row-major) for a single layer.
+- `nodes` (optional): number of neurons in each hidden layer.
+  - Example: `nodes="16 8"` means two hidden layers: 16 and 8 neurons.
+  - If empty, the network has **no hidden layers**.
+- `hiddenActivation` (optional): activation function for hidden layers. Default: ReLU.
+- `outputActivation` (optional): activation function for output layer. Default: Sigmoid.
+- `normalize` (optional): min-max normalize predictors to `[0, 1]`. Default: `true`.
+
+### Network shape logic (important!)
+
+When `initAndValidate()` runs, the class builds the full layer sizes:
 
 ```
-normalized = (value - min) / (max - min)
+input_size = number of predictors
+output_size = 1
+nodes list = [input_size, hidden_1, hidden_2, ..., output_size]
 ```
 
-If all values are identical, they are set to 0.5.
+So if you pass `nodes="16 8"` and you have 3 predictors, the internal layer sizes are:
 
-**Weight Matrix Structure**
-
-Weights are stored as flattened vectors but organized as matrices internally:
-
-* **Row index**: Input node (including bias term at index 0)
-* **Column index**: Output node
-
-For a layer with 3 inputs and 2 outputs (plus bias):
 ```
-Weight matrix shape: (4, 2)
-Flattened weight vector length: 8
-
-Matrix layout:
-[bias→node0,  bias→node1,
- in0→node0,   in0→node1,
- in1→node0,   in1→node1,
- in2→node0,   in2→node1]
+[3, 16, 8, 1]
 ```
 
-**Usage:**
+That implies **3 weight matrices**:
 
-```xml
+- Layer 1: `(3 + 1) x 16` (bias included)
+- Layer 2: `(16 + 1) x 8`
+- Layer 3: `(8 + 1) x 1`
 
-<bella.BayesMLP id="samplingRate" nodes="10 5">
-    <predictor spec="RealParameter" value="1.0 2.0 3.0"/>
-    <predictor spec="RealParameter" value="0.5 1.5 2.5"/>
-    <weights id="w1" spec="RealParameter" value="0.1"
-             dimension="30"/>  <!--Layer 1. Dimensio is set automatically to 30: (2+1)*10 -->
-    <weights id="w2" spec="RealParameter" value="0.1"
-             dimension="55"/>  <!-- Layer 2. Dimensio is set automatically to 55: (10+1)*5 -->
-    <weights id="w3" spec="RealParameter" value="0.1"
-             dimension="6"/>   <!-- Output. Dimensio is set automatically to 6: (5+1)*1 -->
-    <activationFunctionHidden spec="bella.activations.ReLu"/>
-    <activationFunctionsOutput spec="bella.activations.Sigmoid"/>
-</bella.BayesMLP>
+Because of this, the number of `weights` parameters must equal **hidden layers + 1**. If not, `initAndValidate()` throws an error.
+
+### Predictor handling
+
+- Predictors are converted to a matrix with `ParameterUtil.toRealMatrix()`.
+- The matrix is **transposed** so it becomes:
+  - rows = observations (e.g., time bins)
+  - columns = predictors
+- If `normalize=true`, each predictor is scaled to `[0, 1]` in place.
+
+### Forward pass and caching
+
+- The forward pass is computed via `MLPUtil.forward(...)`.
+- In `getArrayValue(n)`, BELLA only recomputes the network **if any weight changed**.
+- Outputs are stored as a matrix, and `getArrayValue(n)` returns the `n`th row (the predicted value for observation `n`).
+
+### Logging behavior
+
+- `init(PrintStream)` writes column headers for each weight, using:
+  - `W.LayerX[i][j]` where X is the layer index.
+- `log(...)` prints all weight values in order.
+
+This means you can trace network weights over MCMC samples, just like any other BEAST parameter 📊.
+
+## `bella.util.MLPUtil` (forward pass)
+
+`MLPUtil` contains two static methods:
+
+1. **`layer_forward(input, weights, activation)`**
+   - Adds a **bias column of ones** to the input matrix.
+   - Performs matrix multiplication with the layer weights.
+   - Applies the activation function element-wise.
+
+2. **`forward(input, weightMatrices, hiddenActivation, outputActivation)`**
+   - Applies `layer_forward` across all layers.
+   - Uses `hiddenActivation` for all but the last layer.
+   - Uses `outputActivation` for the final layer.
+
+This is a standard MLP forward pass with explicit bias handling.
+
+## `bella.util.ParameterUtil` (helpers)
+
+Two small but important utilities:
+
+- **`minMaxNormalize(RealParameter)`**
+  - Scales values into `[0, 1]`.
+  - If all values are identical, they are set to `0.5` to avoid division by zero.
+- **`toRealMatrix(ArrayList<RealParameter>)`**
+  - Converts a list of equally-sized `RealParameter` objects into a matrix.
+  - Throws a clear error if dimensions mismatch.
+
+## Activation functions (`bella.activations`)
+
+All activation functions extend `ActivationFunction`, which defines:
+
+- `apply(double z)` - element-wise transform (must be implemented).
+- `apply(RealMatrix z)` - loops over entries and applies the scalar method.
+
+Concrete activations:
+
+- **ReLU** (`ReLU.java`) 🔺: `max(0, z)`
+- **Tanh** (`Tanh.java`) 🌊: `tanh(z)`
+- **SoftPlus** (`SoftPlus.java`) 🧈: `log(1 + exp(z))`, numerically stable
+- **Identity** (`Identity.java`) ➖: `z`
+- **Sigmoid** (`Sigmoid.java`) 📈: bounded logistic with parameters:
+  - `lower`, `upper` (output range)
+  - `shape` (steepness)
+  - `midpoint` (center point)
+
+Sigmoid is the default for the output layer, which is handy when you want to keep rates within known bounds.
+
+## Summary: data flows through BELLA like this
+
+```
+Predictor vectors
+   v (optional normalization)
+Matrix of observations x predictors
+   v (bias + weights + activation)
+BayesMLP output vector
+   v
+Phylodynamic rate parameter (e.g., skyline birth rate)
 ```
 
-## 2. Activation Functions
-
-### ReLu (Rectified Linear Unit)
-```
-f(x) = max(0, x)
-```
-
-**Usage:**
-
-```xml
-
-<activationFunctionHidden spec="bella.activations.ReLu"/>
-```
-
-**Properties:**
-* Non-linear
-* Output range: [0, ∞)
-* Commonly used in hidden layers
-* Helps avoid vanishing gradient problem
-
-### Sigmoid
-```
-f(x) = lower + (upper - lower) / (1 + exp(-shape * (x - midpoint)))
-```
-
-**Inputs:**
-* `lower` (optional): Lower bound (default: 0.0)
-* `upper` (optional): Upper bound (default: 1.0)
-* `shape` (optional): Steepness parameter (default: 1.0)
-* `midpoint` (optional): Inflection point (default: 0.0)
-
-**Usage:**
-
-```xml
-
-<activationFunctionsOutput spec="bella.activations.Sigmoid" lower="0.0" upper="100.0">
-    <shape spec="RealParameter" value="2.0"/>
-    <midpoint spec="RealParameter" value="0.5"/>
-</activationFunctionsOutput>
-```
-
-**Properties:**
-* S-shaped curve
-* Output range: [lower, upper]
-* Smooth, differentiable
-* Useful for output layers when values need to be bounded
-
-### SoftPlus
-```
-f(x) = log(1 + exp(x))
-```
-
-**Usage:**
-
-```xml
-
-<activationFunctionHidden spec="bella.activations.SoftPlus"/>
-```
-
-**Properties:**
-* Smooth approximation of ReLU
-* Output range: (0, ∞)
-* Always positive
-* Differentiable everywhere
-
-### Tanh (Hyperbolic Tangent)
-```
-f(x) = tanh(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x))
-```
-
-**Usage:**
-
-```xml
-
-<activationFunctionHidden spec="bella.activations.Tanh"/>
-```
-
-**Properties:**
-* S-shaped curve
-* Output range: (-1, 1)
-* Zero-centered
-* Often used in hidden layers
-
-## 3. bella.SkylineNodeTreeLogger
-
-Enhanced tree logger that combines typed node information with skyline parameter values.
-
-**Inputs:**
-* All inputs from `TypedNodeTreeLogger` (from BDMM-Prime)
-* `skylineParameter`: One or more SkylineVectorParameter objects to log
-* `parameterization`: Parameterization object for time conversion
-* `finalSampleOffset` (optional): Time offset for final sample (default: 0.0)
-* `precision` (optional): Decimal places for logging (default: 6)
-
-**Usage:**
-
-```xml
-
-<logger id="treelog" spec="bella.SkylineNodeTreeLogger2"
-        logEvery="1000" fileName="$(filebase).trees" tree="@tree">
-    <skylineParameter idref="birthRateSV"/>
-    <skylineParameter idref="samplingRateSV"/>
-    <parameterization idref="parameterization"/>
-    <finalSampleOffset spec="RealParameter" value="0.0"/>
-    <precision value="4"/>
-</logger>
-```
-
-**Output:**
-
-The logger produces Newick trees with enhanced metadata at each node, including skyline parameter values at the node's time point.
+Understanding this flow will help you build correct BEAST XML configurations and interpret BELLA outputs 🔍.
