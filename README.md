@@ -12,7 +12,7 @@
 
 ## 🗂️ Table of Contents
 
-- [🧭🌐 Overview](#overview)
+- [🧭 Overview](#overview)
 - [✨ Features](#features)
 - [💡 Highlights from the BELLA Paper](#highlights-from-the-bella-paper)
   - [📈 Capturing nonlinear dynamics with BELLA](#capturing-nonlinear-dynamics-with-bella)
@@ -26,13 +26,13 @@
 - [📬 Contact](#contact)
 
 <a id="overview"></a>
-## 🧭🌐 Overview
+## 🧭 Overview
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/gabriele-marino/BELLA/main/figures/BELLA.png" width="100%;">
 </p>
 
-BELLA integrates time-calibrated phylogenies with predictor data—such as traits, environmental covariates, or time series—and prior knowledge on phylodynamic parameters and network weights. It uses a Bayesian neural network to flexibly map these predictors to key evolutionary or epidemiological parameters, like speciation, extinction, transmission, or migration rates, capturing complex nonlinear relationships that go beyond traditional GLMs and skyline models. All parameters, including the network weights, are estimated jointly within a Markov chain Monte Carlo framework. The resulting posterior distributions allow researchers not only to infer population dynamics but also to interpret how predictors influence them, using explainable AI tools.
+BELLA integrates phylogenetic data with predictor covariates—such as traits, environmental time series, or mobility patterns—and prior knowledge on phylodynamic parameters. Importantly, this is formulated as an unsupervised learning problem: no evolutionary or epidemiological rates are observed or used as training targets. Instead, BELLA employs a Bayesian neural network to flexibly learn how predictors relate to key parameters—such as speciation, extinction, transmission, or migration rates—directly through the phylogenetic likelihood. This allows the model to capture complex, nonlinear dependencies that go beyond traditional generalized linear models (GLMs) and skyline models. All parameters, including the neural network weights, are estimated jointly within a Markov chain Monte Carlo framework. The resulting posterior distributions enable both inference of population dynamics and interpretation of predictor effects using explainable AI tools.
 
 <a id="features"></a>
 ## ✨ Features
@@ -90,7 +90,7 @@ We applied BELLA to estimate SARS-CoV-2 migration rates across countries during 
 BELLA is available as a package for [BEAST 2.7+ ](https://www.beast2.org/). You can install it via BEAUti as follows:
 
 1. Open BEAUti.
-2. Go to `File` -> `Manage Packages`.
+2. Go to `File` &rarr; `Manage Packages`.
 3. Click `Package repositories`.
 4. `Add URL` and enter:
 ```https://raw.githubusercontent.com/gabriele-marino/BELLA/main/package.xml```.
@@ -102,6 +102,8 @@ BELLA is available as a package for [BEAST 2.7+ ](https://www.beast2.org/). You 
 ## 🚀 Getting started
 
 We provide several well-documented example configuration files in the [examples](https://github.com/gabriele-marino/BELLA/tree/main/examples) directory, covering a range of use cases. See the [examples README](https://github.com/gabriele-marino/BELLA/tree/main/examples/README.md) to get started!
+
+If you are new to BEAST 2, consider exploring the tutorials in the [BELLA documentation](https://gabriele-marino.github.io/BELLA/tutorials) to get acquainted with BEAST XML configuration files, MCMC analyses, and how BELLA integrates with these workflows.
 
 If you’ve already run your analyses and want to postprocess the results, check out the [BELLA-companion](https://github.com/gabriele-marino/BELLA-companion) Python package, which includes helpful plotting tools like the ones shown above.
 
@@ -115,7 +117,7 @@ The full BELLA documentation is available [here](https://gabriele-marino.github.
 <a id="citing-bella"></a>
 ## 📑 Citing BELLA
 
-If you use BELLA in your research, please cite the following preprint:
+If you use BELLA in your research, please cite the following:
 
 > COMING SOON
 

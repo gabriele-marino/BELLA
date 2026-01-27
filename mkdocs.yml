@@ -4,9 +4,15 @@ docs_dir: doc
 theme:
   name: cinder
 nav:
+  - Highlights from the paper: highlights.md
   - Installation: installation.md
   - Tutorials:
       - Overview: tutorials/index.md
       - FBD example: tutorials/fbd.md
   - Components: components.md
   - Cite: cite.md
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
