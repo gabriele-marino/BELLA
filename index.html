@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://gabriele-marino.github.io/BELLA/">
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    
+    <title>Home - BELLA</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="css/base.min.css" rel="stylesheet">
+    <link href="css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body class="homepage" >
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href=".">BELLA</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="highlights/">Highlights from the paper</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="tutorials/">Overview</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="tutorials/fbd/">FBD example</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="components/">Components</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="prev" >
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="next" href="highlights/">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#overview">🧭 Overview</a></li>
+        <li class="first-level "><a href="#features">✨ Features</a></li>
+        <li class="first-level "><a href="#installation">⚙️ Installation</a></li>
+        <li class="first-level "><a href="#getting-started">🚀 Getting started</a></li>
+        <li class="first-level "><a href="#citing-bella">📑 Citing BELLA</a></li>
+        <li class="first-level "><a href="#contact">📫 Contact</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/gabriele-marino/BELLA/main/figures/logo.png" width="100%;"/>
+</p>
+
+<hr />
+<p><strong>Bayesian Evolutionary Layered Learning Architectures (BELLA)</strong> is a <a href="https://www.beast2.org/">BEAST 2</a> package that brings <em>unsupervised Bayesian neural networks</em> to phylodynamic inference, letting you map rich predictor sets (traits, time series, environmental covariates) to key parameters such as speciation, extinction, transmission, and migration rates — all learned jointly with the phylogeny via MCMC.</p>
+<h2 id="overview">🧭 Overview</h2>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/gabriele-marino/BELLA/main/figures/BELLA.png" width="100%;">
+</p>
+
+<p>BELLA integrates phylogenetic data with predictor covariates—such as traits, environmental time series, or mobility patterns—and prior knowledge on phylodynamic parameters. Importantly, this is formulated as an unsupervised learning problem: no evolutionary or epidemiological rates are observed or used as training targets. Instead, BELLA employs a Bayesian neural network to flexibly learn how predictors relate to key parameters—such as speciation, extinction, transmission, or migration rates—directly through the phylogenetic likelihood. This allows the model to capture complex, nonlinear dependencies that go beyond traditional generalized linear models (GLMs) and skyline models. All parameters, including the neural network weights, are estimated jointly within a Markov chain Monte Carlo framework. The resulting posterior distributions enable both inference of population dynamics and interpretation of predictor effects using explainable AI tools.</p>
+<h2 id="features">✨ Features</h2>
+<ul>
+<li>🧠📈 <strong>Nonlinear, highly flexible mappings</strong> that model smooth, high-dimensional relationships between predictors and phylodynamic parameters, generalizing and extending GLMs and skyline models without restrictive linearity or piecewise-constant assumptions.</li>
+<li>🧬🤖 <strong>Unsupervised Bayesian neural networks</strong> whose weights are inferred jointly with the phylogeny and evolutionary parameters by conditioning directly on the sequence likelihood—eliminating the need for external response variables or labeled training data.</li>
+<li>⚖️🔒 <strong>Built-in regularization</strong> via weight priors that penalize overly complex functions, reducing overfitting while propagating uncertainty into phylodynamic estimates.</li>
+<li>🔍🧩 <strong>Explainable AI tooling</strong> using partial dependence plots and SHAP-style attribution scores to quantify and visualize predictor effects on inferred phylodynamic parameters.</li>
+<li>⚙️🐒🦠 <strong>Deep BEAST 2 integration</strong> enabling end-to-end Bayesian inference for epidemiological and macroevolutionary workflows within existing BEAST 2 pipelines.</li>
+</ul>
+<h2 id="installation">⚙️ Installation</h2>
+<p>BELLA is available as a package for <a href="https://www.beast2.org/">BEAST 2.7+ </a>. You can install it via BEAUti as follows:</p>
+<ol>
+<li>Open BEAUti.</li>
+<li>Go to <code>File</code> &rarr; <code>Manage Packages</code>.</li>
+<li>Click <code>Package repositories</code>.</li>
+<li><code>Add URL</code> and enter:
+<code>https://raw.githubusercontent.com/gabriele-marino/BELLA/main/package.xml</code>.</li>
+<li>Click <code>OK</code> to add the repository.</li>
+<li>Close the Package Repositories window. Return to the Package Manager window, scroll down to find <code>BELLA</code>, select it, and click Install/Upgrade.</li>
+<li>You're now ready to use BELLA!</li>
+</ol>
+<h2 id="getting-started">🚀 Getting started</h2>
+<p>We provide several well-documented example configuration files in the <a href="https://github.com/gabriele-marino/BELLA/tree/main/examples">BELLA examples</a> directory, covering a range of use cases. See the <a href="https://github.com/gabriele-marino/BELLA/tree/main/examples/README.md">examples README</a> to get started!</p>
+<p>If you are new to BEAST 2, consider exploring the <a href="https://gabriele-marino.github.io/BELLA/tutorials">tutorials</a> to familiarize yourself with BEAST XML configuration files and MCMC analyses.</p>
+<p>If you’ve already run your analyses and want to postprocess the results, check out the <a href="https://github.com/gabriele-marino/BELLA-companion">BELLA-companion</a> Python package, which includes helpful plotting tools like the ones shown above.</p>
+<blockquote>
+<p>❗️ If you don't find what you're looking for, please <a href="mailto:gabmarino.8601@email.com">reach out</a>—I’m always happy to help!</p>
+</blockquote>
+<h2 id="citing-bella">📑 Citing BELLA</h2>
+<p>If you use BELLA in your research, please cite the following:</p>
+<blockquote>
+<p>COMING SOON</p>
+</blockquote>
+<h2 id="contact">📫 Contact</h2>
+<p>For questions, bug reports, or feature requests, please, consider opening an <a href="https://github.com/gabriele-marino/BELLA/issues">issue on GitHub</a>, or <a href="mailto:gabmarino.8601@email.com">contact me directly</a>.</p>
+<p>For help with configuration files, don’t hesitate to reach out — I’m happy to assist!</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "."</script>
+    
+    <script src="js/base.js"></script>
+    <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-01-28 01:23:01.426691+00:00
+-->

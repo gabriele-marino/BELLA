@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://gabriele-marino.github.io/BELLA/components/">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>Components - BELLA</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">BELLA</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../highlights/">Highlights from the paper</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../tutorials/">Overview</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../tutorials/fbd/">FBD example</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="active">
+                        <a href="./">Components</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../tutorials/fbd/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#components">Components</a></li>
+            <li class="second-level"><a href="#bellabayesmlp">bella.BayesMLP</a></li>
+                
+            <li class="second-level"><a href="#bellaactivations">bella.activations</a></li>
+                
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="components">Components</h1>
+<p>This section describes the main BELLA components you can use in your BEAST XML files. The core component is the <a href="#bella.BayesMLP">BayesMLP</a>, which implements a Bayesian multilayer perceptron (MLP) to map predictor variables to phylodynamic parameters. Additionally, BELLA includes several <a href="#bella.activations">ActivationFunction</a>s that can be used within the MLP. These components rely on standard BEAST interfaces such as <code>CalculationNode</code>, <code>RealParameter</code>, <code>Function</code>, and <code>Loggable</code>, and are designed to be flexible and integrate seamlessly with BEAST 2's MCMC framework. </p>
+<p><a id="bella.BayesMLP"></a></p>
+<h2 id="bellabayesmlp"><a href="#bella.BayesMLP">bella.BayesMLP</a></h2>
+<p><a href="#bella.BayesMLP">BayesMLP</a> is the main BELLA component you reference in a BEAST XML. It extends <code>CalculationNode</code> and implements <code>Function</code> and <code>Loggable</code>, which makes it:</p>
+<ul>
+<li>A value-producing node (<code>Function</code>): it outputs a vector of predicted rates.</li>
+<li>A recalculating node (<code>CalculationNode</code>): it recomputes only when needed.</li>
+<li>A loggable node (<code>Loggable</code>): it can print its weights to the BEAST log.</li>
+</ul>
+<p>A <a href="#bella.BayesMLP">BayesMLP</a> represents a fully connected feedforward neural network (multilayer perceptron, MLP) with arbitrary hidden layers, used to map predictor variables to phylodynamic parameters.</p>
+<p>It has the following BEAST XML attributes:</p>
+<ul>
+<li><code>predictor</code> (required): list of <code>RealParameter</code> objects. Each parameter is a vector of predictor values. All predictors must have the same length, which defines the number of observations (e.g., time bins), and corresponds to the size of the output of the network.</li>
+<li><code>weights</code> (required): list of <code>RealParameter</code> objects, one per layer connection. Each is a flattened weight matrix (row-major) for a single layer. The size of each weight matrix is determined internally by the number of neurons in the source and target layers, and is equal to <span class="arithmatex">\((\text{n_source} + 1) \times \text{n_target}\)</span> (the +1 accounts for the bias term).</li>
+<li><code>nodes</code> (optional): number of neurons in each hidden layer. For example, <code>nodes="16 8"</code> means two hidden layers: 16 and 8 neurons. Default is an empty list, corresponding to no hidden layers.</li>
+<li><code>hiddenActivation</code> (optional): <a href="#bella.activations">activation function</a> for hidden layers. Default: ReLU.</li>
+<li><code>outputActivation</code> (optional): <a href="#bella.activations">activation function</a> for the output layer. Default: Sigmoid.</li>
+<li><code>normalize</code> (optional): Whether to apply min–max normalization to predictor values, scaling them to the range <span class="arithmatex">\([0, 1]\)</span> before they are passed to the network. Default: <code>true</code>.</li>
+</ul>
+<p>When a <a href="#bella.BayesMLP">BayesMLP</a> object is initialized, the class builds the full layer sizes, using the number of predictors as the size of the input layer and 1 as the size of the output layer. So if you pass <code>nodes="16 8"</code> and you have 3 predictors, the internal layer sizes are: <span class="arithmatex">\([3, 16, 8, 1]\)</span>. That implies 3 weight matrices:</p>
+<ul>
+<li>Layer 1: <span class="arithmatex">\((3 + 1) \times 16\)</span></li>
+<li>Layer 2: <span class="arithmatex">\((16 + 1) \times 8\)</span></li>
+<li>Layer 3: <span class="arithmatex">\((8 + 1) \times 1\)</span>.</li>
+</ul>
+<p>Because of this, the number of <code>weights</code> parameters must equal the number of hidden layers + 1. If not, an error is raised during initialization.</p>
+<p>Predictor values are managed within the class as a matrix of size <span class="arithmatex">\((\text{num_observations} \times \text{num_predictors})\)</span>. Each row corresponds to one observation (e.g., a time bin), and each column to one predictor variable. When performing a forward pass, the entire matrix is processed at once, yielding an output vector of size <span class="arithmatex">\((\text{num_observations} \times 1)\)</span>. Thus, each observation gets its own predicted rate.</p>
+<p><a href="#bella.BayesMLP">BayesMLP</a> implements the <code>Loggable</code> interface, which makes it possible to log the network weights during MCMC. When you add a <a href="#bella.BayesMLP">BayesMLP</a> to the BEAST log, it will output one column per weight in the network, using the following format: <code>&lt;id&gt;W.Layer&lt;X&gt;[&lt;i&gt;][&lt;j&gt;]</code>, where:</p>
+<ul>
+<li><code>&lt;id&gt;</code> is the BEAST object ID of the <a href="#bella.BayesMLP">BayesMLP</a> instance.</li>
+<li><code>&lt;X&gt;</code> is the layer index (1-based).</li>
+<li><code>&lt;i&gt;</code> is the input neuron index (including bias term, so <span class="arithmatex">\(i=0\)</span> is bias).</li>
+<li><code>&lt;j&gt;</code> is the output neuron index.</li>
+</ul>
+<p><a id="bella.activations"></a></p>
+<h2 id="bellaactivations"><a href="#bella.activations">bella.activations</a></h2>
+<p>Activation functions are used within the <a href="#bella.BayesMLP">BayesMLP</a> to introduce nonlinearity. BELLA provides several built-in activation functions that you can specify in your BEAST XML configuration:</p>
+<ul>
+<li><code>bella.activations.Identity</code>: Identity activation function. Implements <span class="arithmatex">\(f(z) = z\)</span>.</li>
+<li><code>bella.activations.ReLU</code>: Rectified Linear Unit (ReLU) activation function. Implements <span class="arithmatex">\(f(z) = \max(0, z)\)</span>.</li>
+<li><code>bella.activations.Tanh</code>: Hyperbolic tangent activation function. Implements <span class="arithmatex">\(f(z) = \tanh(z)\)</span>.</li>
+<li><code>bella.activations.SoftPlus</code>: SoftPlus activation function. Implements <span class="arithmatex">\(f(z) = \log(1 + \exp(z))\)</span>, with numerical stability.</li>
+<li><code>bella.activations.Sigmoid</code>: Sigmoid activation function with customizable parameters. Implements a bounded logistic function defined by:
+  $$
+  f(z) = \text{lower} + \frac{\text{upper} - \text{lower}}{1 + \exp(-\text{shape} * (z - \text{midpoint}))}
+  $$
+  where <span class="arithmatex">\(\text{lower}\)</span>, <span class="arithmatex">\(\text{upper}\)</span>, <span class="arithmatex">\(\text{shape}\)</span>, and <span class="arithmatex">\(\text{midpoint}\)</span> are parameters you can set in the XML.</li>
+</ul>
+<p>The output activation function is a useful way to enforce particular behaviors on the network’s output, such as bounding rates within a specific range using the sigmoid function. The hidden activation function is typically set to ReLU because its non-saturating linear regime avoids compression of activity and supports a wide dynamic range.</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>

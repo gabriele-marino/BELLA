@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://gabriele-marino.github.io/BELLA/tutorials/fbd/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    
+    <title>FBD example - BELLA</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../../css/base.min.css" rel="stylesheet">
+    <link href="../../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="../..">BELLA</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../../highlights/">Highlights from the paper</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../">Overview</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">FBD example</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../../components/">Components</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="next" href="../../components/">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#tutorial-fbd-example">Tutorial: FBD example</a></li>
+            <li class="second-level"><a href="#how-bella-fits-into-beast">How BELLA fits into BEAST</a></li>
+                
+            <li class="second-level"><a href="#what-you-need-to-know-before-you-start">What you need to know before you start</a></li>
+                
+            <li class="second-level"><a href="#files-you-will-use">Files you will use</a></li>
+                
+            <li class="second-level"><a href="#step-1-review-the-json-parameters">Step 1: Review the JSON parameters</a></li>
+                
+            <li class="second-level"><a href="#step-2-see-how-bella-is-used-in-the-xml">Step 2: See how BELLA is used in the XML</a></li>
+                
+            <li class="second-level"><a href="#step-3-run-the-analysis">Step 3: Run the analysis</a></li>
+                
+            <li class="second-level"><a href="#step-4-inspect-outputs">Step 4: Inspect outputs</a></li>
+                
+            <li class="second-level"><a href="#customizing-for-your-own-data">Customizing for your own data</a></li>
+                
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="tutorial-fbd-example">Tutorial: FBD example</h1>
+<p>This tutorial walks through the <strong>Fossilized Birth-Death (FBD)</strong> example in <code>examples/FBD</code> and shows how BELLA predicts skyline speciation and extinction rates.</p>
+<h2 id="how-bella-fits-into-beast">How BELLA fits into BEAST</h2>
+<p>If you are new to BEAST, think of it this way:</p>
+<ol>
+<li><strong>BEAST</strong> is a Bayesian engine that runs MCMC to estimate phylogenies and model parameters.</li>
+<li><strong>BELLA</strong> is a package that provides a neural-network component (<code>bella.BayesMLP</code>) that BEAST can call <strong>inside</strong> the model.</li>
+<li>Your BEAST XML config file wires predictors -&gt; BELLA network -&gt; phylodynamic rates -&gt; likelihood.</li>
+</ol>
+<p>In short: <strong>BELLA is a neural network node inside the BEAST model graph</strong> 🧠➡️🌳.</p>
+<h2 id="what-you-need-to-know-before-you-start">What you need to know before you start</h2>
+<ul>
+<li>BELLA runs on <strong>BEAST 2.7+</strong> and requires <strong>Java 17+</strong>.</li>
+<li>You will work with <strong>BEAST XML configuration files</strong>. These files declare data, model components, priors, and MCMC settings.</li>
+<li>BELLA exposes a <strong>Bayesian MLP</strong> that is configured in the XML like any other BEAST component.</li>
+</ul>
+<p>Ready? Head to the installation guide next! 🚀</p>
+<h2 id="files-you-will-use">Files you will use</h2>
+<ul>
+<li><code>examples/FBD/config.xml</code> - BEAST configuration with BELLA wired in.</li>
+<li><code>examples/FBD/data.json</code> - values that fill the <code>$(...)</code> placeholders.</li>
+<li><code>examples/FBD/tree.nwk</code> - fixed phylogenetic tree.</li>
+<li><code>examples/FBD/birth_rate_predictor.csv</code> - predictor values for birth rate.</li>
+</ul>
+<h2 id="step-1-review-the-json-parameters">Step 1: Review the JSON parameters</h2>
+<p>Open <code>examples/FBD/data.json</code> and check these values:</p>
+<ul>
+<li><code>processLength</code>: total time span of the FBD process.</li>
+<li><code>changeTimes</code>: boundaries of skyline bins (space-separated).</li>
+<li><code>layersRange</code> and <code>nodes</code>: define the MLP architecture.</li>
+<li><code>birthRatePredictorFile</code> and <code>deathRatePredictor</code>: predictor inputs.</li>
+<li><code>birthRateLower/Upper</code>, <code>deathRateLower/Upper</code>: bounds for rates.</li>
+</ul>
+<p>Important rule: the number of predictor values <strong>must equal</strong> <code>length(changeTimes) + 1</code>.</p>
+<h2 id="step-2-see-how-bella-is-used-in-the-xml">Step 2: See how BELLA is used in the XML</h2>
+<p>Inside <code>config.xml</code>, BELLA is used twice - once for birth rates and once for death rates. Both are skyline parameters with the same time bins:</p>
+<pre><code class="language-xml">&lt;birthRate id=&quot;birthRateSP&quot; spec=&quot;SkylineVectorParameter&quot; changeTimes=&quot;$(changeTimes)&quot;&gt;
+    &lt;skylineValues id=&quot;birthRate&quot; spec=&quot;bella.BayesMLP&quot; nodes=&quot;$(nodes)&quot;&gt;
+        &lt;predictor spec=&quot;RealParameterFromXSV&quot; fileName=&quot;$(birthRatePredictorFile)&quot;/&gt;
+        &lt;plate var=&quot;n&quot; range=&quot;$(layersRange)&quot;&gt;
+            &lt;weights idref=&quot;birthRateW$(n)&quot;/&gt;
+        &lt;/plate&gt;
+        &lt;outputActivation spec=&quot;bella.activations.Sigmoid&quot; lower=&quot;$(birthRateLower)&quot; upper=&quot;$(birthRateUpper)&quot;/&gt;
+    &lt;/skylineValues&gt;
+&lt;/birthRate&gt;
+</code></pre>
+<p>The death-rate block is identical except the predictor is provided directly as a vector in <code>data.json</code>.</p>
+<h2 id="step-3-run-the-analysis">Step 3: Run the analysis</h2>
+<p>From the repository root:</p>
+<pre><code class="language-bash">beast -DF FBD/data.json FBD/config.xml
+</code></pre>
+<h2 id="step-4-inspect-outputs">Step 4: Inspect outputs</h2>
+<p>The example writes:</p>
+<ul>
+<li><code>FBD.log</code> - posterior, likelihood, priors, sampling rate, and skyline rates.</li>
+</ul>
+<p>You can now plot skyline rates and interpret how BELLA mapped predictors to parameters 🎉.</p>
+<h2 id="customizing-for-your-own-data">Customizing for your own data</h2>
+<p>Start by editing <code>data.json</code> first:</p>
+<ul>
+<li>adjust <code>changeTimes</code> to match your time bins</li>
+<li>replace the predictor file or predictor vector</li>
+<li>tune rate bounds and priors</li>
+</ul>
+<p>If you need more flexibility, edit <code>config.xml</code> directly. It contains inline comments that point to the main BELLA sections.</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "../.."</script>
+    
+    <script src="../../js/base.js"></script>
+    <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>

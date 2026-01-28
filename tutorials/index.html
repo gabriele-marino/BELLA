@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://gabriele-marino.github.io/BELLA/tutorials/">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>Overview - BELLA</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">BELLA</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../highlights/">Highlights from the paper</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li class="active">
+    <a href="./">Overview</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="fbd/">FBD example</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../components/">Components</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../highlights/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="next" href="fbd/">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#tutorials-overview">Tutorials overview</a></li>
+            <li class="second-level"><a href="#beast-in-one-minute">BEAST in one minute</a></li>
+                
+            <li class="second-level"><a href="#where-bella-fits">Where BELLA fits</a></li>
+                
+            <li class="second-level"><a href="#how-a-bella-xml-is-structured">How a BELLA XML is structured</a></li>
+                
+                <li class="third-level"><a href="#1-xml-skeleton">1) XML skeleton</a></li>
+                <li class="third-level"><a href="#2-data-inputs">2) Data inputs</a></li>
+                <li class="third-level"><a href="#3-state-nodes-parameters-to-estimate">3) State nodes (parameters to estimate)</a></li>
+                <li class="third-level"><a href="#4-bella-wiring-predictors-rates">4) BELLA wiring (predictors -&gt; rates)</a></li>
+                <li class="third-level"><a href="#5-time-bins-and-skyline-vectors">5) Time bins and skyline vectors</a></li>
+                <li class="third-level"><a href="#6-activation-functions-hidden-output-layers">6) Activation functions (hidden + output layers)</a></li>
+                <li class="third-level"><a href="#7-likelihood-and-priors">7) Likelihood and priors</a></li>
+                <li class="third-level"><a href="#8-operators-how-mcmc-moves">8) Operators (how MCMC moves)</a></li>
+                <li class="third-level"><a href="#9-logging-including-bella-internals">9) Logging (including BELLA internals)</a></li>
+                <li class="third-level"><a href="#10-json-df-substitutions">10) JSON + -DF substitutions</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="tutorials-overview">Tutorials overview</h1>
+<p>Welcome to the BELLA tutorials ✅. This section is split into:</p>
+<ul>
+<li>A <strong>general overview</strong> of BEAST and BELLA.</li>
+<li>One <strong>tutorial per example</strong> in <code>examples/</code>.</li>
+</ul>
+<p>If you are new to BEAST, start here before jumping into the example pages.</p>
+<h2 id="beast-in-one-minute">BEAST in one minute</h2>
+<p>BEAST (Bayesian Evolutionary Analysis by Sampling Trees) runs <strong>MCMC</strong> to estimate phylogenies and model parameters. A BEAST analysis is defined by an <strong>XML configuration file</strong> that declares:</p>
+<ul>
+<li>data (trees, alignments, predictors)</li>
+<li>model components (priors, likelihoods, parameterizations)</li>
+<li>MCMC settings (operators, logging, chain length)</li>
+</ul>
+<p>Think of the XML as a <strong>model graph</strong>: nodes compute values, and BEAST samples the parameters that feed those nodes.</p>
+<h2 id="where-bella-fits">Where BELLA fits</h2>
+<p>BELLA provides a Bayesian neural network component that lives <strong>inside</strong> the BEAST model graph. In practice:</p>
+<ol>
+<li>You declare predictors (trait vectors or time series).</li>
+<li>BELLA (<code>bella.BayesMLP</code>) maps predictors -&gt; rates.</li>
+<li>Those rates feed a phylodynamic model (birth-death, migration, etc.).</li>
+</ol>
+<p>This lets BEAST estimate <strong>network weights and evolutionary parameters jointly</strong>.</p>
+<p>BELLA behaves like any other BEAST component:</p>
+<ul>
+<li>it is a <strong>CalculationNode</strong> (recomputes when its inputs change),</li>
+<li>a <strong>Function</strong> (outputs a vector of values),</li>
+<li>and a <strong>Loggable</strong> (it can write to BEAST logs).</li>
+</ul>
+<h2 id="how-a-bella-xml-is-structured">How a BELLA XML is structured</h2>
+<p>Below is the mental model for a BELLA-driven BEAST analysis:</p>
+<pre><code>Data + predictors + priors
+        v
+   BEAST XML
+        v
+      MCMC
+        v
+ Posterior logs
+</code></pre>
+<h3 id="1-xml-skeleton">1) XML skeleton</h3>
+<p>Every BEAST XML starts with a <code>&lt;beast&gt;</code> tag and a <code>namespace</code> that includes BELLA and any extra packages you need.</p>
+<h3 id="2-data-inputs">2) Data inputs</h3>
+<p>You typically provide:</p>
+<ul>
+<li>a <strong>tree</strong> (often Newick)</li>
+<li>one or more <strong>predictor vectors</strong> (CSV or direct values)</li>
+</ul>
+<h3 id="3-state-nodes-parameters-to-estimate">3) State nodes (parameters to estimate)</h3>
+<p>In BEAST, <strong>state nodes</strong> are parameters sampled by MCMC. For BELLA, these are usually the <strong>network weights</strong>. Other parameters (like sampling rates, clock rates, or population sizes) can also be sampled.</p>
+<p>Example:</p>
+<pre><code class="language-xml">&lt;state id=&quot;state&quot;&gt;
+    &lt;plate var=&quot;n&quot; range=&quot;$(layersRange)&quot;&gt;
+        &lt;stateNode spec=&quot;RealParameter&quot; id=&quot;birthRateW$(n)&quot; value=&quot;0&quot;/&gt;
+        &lt;stateNode spec=&quot;RealParameter&quot; id=&quot;deathRateW$(n)&quot; value=&quot;0&quot;/&gt;
+    &lt;/plate&gt;
+    &lt;stateNode spec=&quot;RealParameter&quot; id=&quot;samplingRate&quot; value=&quot;$(samplingRateInit)&quot;/&gt;
+&lt;/state&gt;
+</code></pre>
+<p>How to think about it:</p>
+<ul>
+<li><code>layersRange</code> expands one state node <strong>per layer connection</strong>.</li>
+<li>BELLA expects <strong>one weight parameter per connection</strong> (hidden layers + 1).</li>
+<li>The weight parameters are flattened vectors; BELLA reshapes them internally.</li>
+</ul>
+<h3 id="4-bella-wiring-predictors-rates">4) BELLA wiring (predictors -&gt; rates)</h3>
+<p>A BELLA MLP is defined in XML like this:</p>
+<pre><code class="language-xml">&lt;skylineValues id=&quot;birthRate&quot; spec=&quot;bella.BayesMLP&quot; nodes=&quot;$(nodes)&quot;&gt;
+    &lt;predictor spec=&quot;RealParameterFromXSV&quot; fileName=&quot;$(birthRatePredictorFile)&quot;/&gt;
+    &lt;plate var=&quot;n&quot; range=&quot;$(layersRange)&quot;&gt;
+        &lt;weights idref=&quot;birthRateW$(n)&quot;/&gt;
+    &lt;/plate&gt;
+    &lt;outputActivation spec=&quot;bella.activations.Sigmoid&quot; lower=&quot;$(birthRateLower)&quot; upper=&quot;$(birthRateUpper)&quot;/&gt;
+&lt;/skylineValues&gt;
+</code></pre>
+<p>Key points:</p>
+<ul>
+<li><code>nodes</code> defines <strong>hidden layers</strong> only. BELLA adds input and output layers automatically.</li>
+<li>The predictor list becomes a matrix. Each row is an observation (time bin), each column is a predictor.</li>
+<li>Use <code>outputActivation</code> to constrain the output range (Sigmoid is a common choice).</li>
+<li>If <code>normalize=true</code> (default), BELLA min-max normalizes predictor vectors to <code>[0, 1]</code>.</li>
+</ul>
+<h3 id="5-time-bins-and-skyline-vectors">5) Time bins and skyline vectors</h3>
+<p>BELLA often predicts <strong>skyline vectors</strong>, where each element is a rate for a time bin.</p>
+<p>If your XML contains:</p>
+<pre><code>changeTimes = &quot;t1 t2 ...&quot;
+</code></pre>
+<p>then the number of skyline values is:</p>
+<pre><code>length(changeTimes) + 1
+</code></pre>
+<p>So every predictor vector must have that exact length.</p>
+<h3 id="6-activation-functions-hidden-output-layers">6) Activation functions (hidden + output layers)</h3>
+<p>BELLA supports multiple activation functions. You configure them in XML with <code>hiddenActivation</code> and <code>outputActivation</code>:</p>
+<pre><code class="language-xml">&lt;skylineValues id=&quot;birthRate&quot; spec=&quot;bella.BayesMLP&quot; nodes=&quot;$(nodes)&quot;&gt;
+    &lt;predictor spec=&quot;RealParameterFromXSV&quot; fileName=&quot;$(birthRatePredictorFile)&quot;/&gt;
+    &lt;hiddenActivation spec=&quot;bella.activations.ReLU&quot;/&gt;
+    &lt;outputActivation spec=&quot;bella.activations.Sigmoid&quot; lower=&quot;$(birthRateLower)&quot; upper=&quot;$(birthRateUpper)&quot;/&gt;
+    ...
+&lt;/skylineValues&gt;
+</code></pre>
+<p>Available activations:</p>
+<ul>
+<li><strong>ReLU</strong>: <code>max(0, z)</code> (default for hidden layers)</li>
+<li><strong>Tanh</strong>: <code>tanh(z)</code></li>
+<li><strong>SoftPlus</strong>: <code>log(1 + exp(z))</code> with a stable implementation</li>
+<li><strong>Identity</strong>: <code>z</code> (no nonlinearity)</li>
+<li><strong>Sigmoid</strong>: bounded logistic with parameters:</li>
+<li><code>lower</code> and <code>upper</code> to clamp the output range</li>
+<li><code>shape</code> (steepness) and <code>midpoint</code> (center)</li>
+</ul>
+<p>Practical guidance:</p>
+<ul>
+<li>Use <strong>Sigmoid</strong> for outputs that must stay within bounds (rates, probabilities).</li>
+<li>Use <strong>ReLU</strong> or <strong>Tanh</strong> for hidden layers to allow nonlinear mappings.</li>
+<li>If you want linear outputs, set <code>outputActivation</code> to <strong>Identity</strong>.</li>
+</ul>
+<h3 id="7-likelihood-and-priors">7) Likelihood and priors</h3>
+<p>In BEAST, the <strong>posterior</strong> is a product of likelihood and prior terms:</p>
+<pre><code class="language-xml">&lt;distribution id=&quot;posterior&quot; spec=&quot;CompoundDistribution&quot;&gt;
+    &lt;distribution id=&quot;likelihood&quot; spec=&quot;CompoundDistribution&quot;&gt;
+        &lt;!-- model likelihood here --&gt;
+    &lt;/distribution&gt;
+    &lt;distribution id=&quot;prior&quot; spec=&quot;CompoundDistribution&quot;&gt;
+        &lt;!-- priors here --&gt;
+    &lt;/distribution&gt;
+&lt;/distribution&gt;
+</code></pre>
+<p>BELLA weights are just parameters, so you place priors on them like any other RealParameter:</p>
+<pre><code class="language-xml">&lt;Normal id=&quot;weightsPrior&quot; mean=&quot;0&quot; sigma=&quot;1&quot;/&gt;
+&lt;plate var=&quot;n&quot; range=&quot;$(layersRange)&quot;&gt;
+    &lt;distribution spec=&quot;Prior&quot; x=&quot;@birthRateW$(n)&quot; distr=&quot;@weightsPrior&quot;/&gt;
+    &lt;distribution spec=&quot;Prior&quot; x=&quot;@deathRateW$(n)&quot; distr=&quot;@weightsPrior&quot;/&gt;
+&lt;/plate&gt;
+</code></pre>
+<h3 id="8-operators-how-mcmc-moves">8) Operators (how MCMC moves)</h3>
+<p>Operators propose new parameter values so MCMC can explore the posterior. BELLA examples use Bactrian random walks on weights:</p>
+<pre><code class="language-xml">&lt;plate var=&quot;n&quot; range=&quot;$(layersRange)&quot;&gt;
+    &lt;operator spec=&quot;BactrianRandomWalkOperator&quot; parameter=&quot;@birthRateW$(n)&quot; weight=&quot;30.0&quot;/&gt;
+    &lt;operator spec=&quot;BactrianRandomWalkOperator&quot; parameter=&quot;@deathRateW$(n)&quot; weight=&quot;30.0&quot;/&gt;
+&lt;/plate&gt;
+</code></pre>
+<p>Use higher weights for parameters that need more frequent updates. Tune operator weights and step sizes if mixing is poor.</p>
+<h3 id="9-logging-including-bella-internals">9) Logging (including BELLA internals)</h3>
+<p>Logging controls what you see in output files. You can log:</p>
+<ul>
+<li><strong>posterior, likelihood, prior</strong></li>
+<li><strong>skyline rates</strong></li>
+<li><strong>BELLA outputs</strong></li>
+<li><strong>BELLA network weights</strong></li>
+</ul>
+<p>Example logger:</p>
+<pre><code class="language-xml">&lt;logger spec=&quot;Logger&quot; fileName=&quot;FBD.log&quot; logEvery=&quot;$(logEvery)&quot; model=&quot;@posterior&quot;&gt;
+    &lt;log idref=&quot;posterior&quot;/&gt;
+    &lt;log idref=&quot;prior&quot;/&gt;
+    &lt;log idref=&quot;likelihood&quot;/&gt;
+    &lt;log idref=&quot;birthRateSP&quot;/&gt;
+    &lt;log idref=&quot;deathRateSP&quot;/&gt;
+    &lt;log idref=&quot;birthRate&quot;/&gt;
+    &lt;log idref=&quot;deathRate&quot;/&gt;
+&lt;/logger&gt;
+</code></pre>
+<p>How BELLA logs its weights:</p>
+<ul>
+<li><code>bella.BayesMLP</code> implements <strong>Loggable</strong>.</li>
+<li>On init, it prints headers like <code>W.LayerX[i][j]</code> for every weight matrix entry.</li>
+<li><code>X</code> is the layer index (1-based).</li>
+<li><code>i</code> is the input neuron index (including the bias row as index 0).</li>
+<li><code>j</code> is the output neuron index.</li>
+<li>During logging, it prints every weight value in order.</li>
+</ul>
+<p>So if you add <code>&lt;log idref="birthRate"/&gt;</code> and <code>&lt;log idref="deathRate"/&gt;</code>, you will get the full network weights per MCMC sample in your log file.</p>
+<h3 id="10-json-df-substitutions">10) JSON + <code>-DF</code> substitutions</h3>
+<p>BELLA examples use a <code>data.json</code> file that fills placeholders like <code>$(treeFile)</code> and <code>$(nodes)</code> at runtime.</p>
+<p>Run with:</p>
+<pre><code class="language-bash">beast -DF path/to/data.json path/to/config.xml
+</code></pre>
+<p>This is the easiest way to tweak a BELLA configuration without editing the XML directly.</p>
+<hr />
+<p>Next, choose a specific tutorial from the sidebar for a full, runnable example 🚀.</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
