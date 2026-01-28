@@ -1,18 +1,21 @@
 site_name: BELLA
 site_url: https://gabriele-marino.github.io/BELLA/
-docs_dir: doc
+
 theme:
   name: cinder
+
+docs_dir: doc
 nav:
+  - Home: index.md
   - Highlights from the paper: highlights.md
-  - Installation: installation.md
   - Tutorials:
       - Overview: tutorials/index.md
       - FBD example: tutorials/fbd.md
   - Components: components.md
-  - Cite: cite.md
+
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+
 extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

@@ -144,7 +144,7 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
      *
      * <p>Header format:
      * <pre>
-     * &lt;id&gt;W.Layer&lt;X[&lt;i&gt;][&lt;j&gt;]
+     * &lt;id&gt;W.Layer&lt;X&gt;[&lt;i&gt;][&lt;j&gt;]
      * </pre>
      *
      * <p>Where:
