@@ -4,9 +4,9 @@
 
     <service type="beast.base.core.BEASTInterface">
         <provider classname="bella.activations.Identity"/>
-        <provider classname="bella.activations.ReLu"/>
+        <provider classname="bella.activations.ReLU"/>
         <provider classname="bella.activations.Sigmoid"/>
-        <provider classname="bella.activations.SoftPlus"/>
+        <provider classname="bella.activations.Softplus"/>
         <provider classname="bella.activations.Tanh"/>
         <provider classname="bella.BayesMLP"/>
     </service>

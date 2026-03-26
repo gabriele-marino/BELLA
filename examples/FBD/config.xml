@@ -12,12 +12,11 @@
     :feast.fileio"
     version="2.5"
 >
-    <!-- Note: "$(<...>)" values are filled from data.json via the `-DF` beast options. -->
+    <!-- Note: "$(<...>)" values are filled from data.json via the `-DF` BEAST option. -->
 
     <!-- Shortcuts for classes used below. -->
     <map name="Uniform">beast.base.inference.distribution.Uniform</map>
     <map name="Normal">beast.base.inference.distribution.Normal</map>
-
     <map name="TreeFromNewickFile">feast.fileio.TreeFromNewickFile</map>
 
     <!-- Fixed input tree for this demo. -->

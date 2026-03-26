@@ -1,12 +1,12 @@
 package bella.activations;
 
 /**
- * SoftPlus activation function.
+ * Softplus activation function.
  * <p>
  * Applies element-wise:
  *     f(z) = log(1 + exp(z))
  */
-public class SoftPlus extends ActivationFunction {
+public class Softplus extends ActivationFunction {
 
     @Override
     public void initAndValidate() {
