@@ -57,7 +57,7 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
             "Whether to apply min–max normalization to predictor values, "
                     + "scaling them to the range [0, 1] before they are passed to the network. "
                     + "Default is true.",
-            true, Input.Validate.OPTIONAL);
+            false, Input.Validate.OPTIONAL);
 
     RealMatrix predictors; // Input predictors matrix of shape [predictorSize × nPredictors]
     List<Integer> nodes; // Number of neurons in each layer of the network, of length nHiddenLayers + 2
@@ -69,6 +69,12 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
 
     @Override
     public void initAndValidate() {
+        if (normalizeInput.get()) {
+            for (RealParameter predictor : predictorsInput.get()) {
+                ParameterUtil.minMaxNormalize(predictor);
+            }
+        }
+
         try {
             // Attempt to convert the input to a RealMatrix and transpose it
             predictors = ParameterUtil.toRealMatrix(predictorsInput.get()).transpose();
@@ -76,11 +82,6 @@ public class BayesMLP extends CalculationNode implements Function, Loggable {
             // Raise a new exception with additional context
             throw new IllegalArgumentException("Error converting predictors to RealMatrix. " +
                     "Check the input parameter sizes.", e);
-        }
-        if (normalizeInput.get()) {
-            for (RealParameter predictor : predictorsInput.get()) {
-                ParameterUtil.minMaxNormalize(predictor);
-            }
         }
 
         nodes = nodesInput.get();

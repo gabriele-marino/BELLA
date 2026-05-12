@@ -25,9 +25,7 @@
     <!-- Initialize BEAST source root based on local availability -->
     <target name="init-beast">
         <available file="${local-beast-source-root}" type="dir" property="localBeastAvailable"/>
-        <condition property="beast-source-root"
-                value="${local-beast-source-root}"
-                else="${remote-beast-source-root}">
+        <condition property="beast-source-root" value="${local-beast-source-root}" else="${remote-beast-source-root}">
             <isset property="localBeastAvailable"/>
         </condition>
 
